@@ -1,0 +1,165 @@
+import AccountInformation from "./account-information";
+import AmountInformation from "./amount-information";
+import HostInformation from "./host-information";
+import TraceInformation from "./trace-information";
+
+class PaxLocalDetailReport {
+    totalRecord: string; //5
+    recordNumber: string; //6
+    hostInformationRaw: HostInformation; //7
+    hostInformation: string; //7
+    edcType: string; //8
+    paymentType: string; //9
+    unknown1: string; //10
+    amountInformationRaw: string; //11
+    amountInformation: AmountInformation; //11
+    accountInformationRaw: string; // 12
+    accountInformation: AccountInformation; //12
+    traceInformationRaw: string; //13
+    traceInformation: TraceInformation; //13
+    unknown2: string; //14
+    unknown3: string; //15
+    unknown4: string; //16
+    additionalInformationRaw: string; //17
+
+    constructor({
+                    totalRecord,
+                    recordNumber,
+                    hostInformationRaw,
+                    hostInformation,
+                    edcType,
+                    paymentType,
+                    amountInformationRaw,
+                    amountInformation,
+                    accountInformationRaw,
+                    accountInformation,
+                    traceInformationRaw,
+                    traceInformation,
+                    additionalInformationRaw,
+                }) {
+        this.totalRecord = totalRecord;
+        this.recordNumber = recordNumber;
+        this.hostInformationRaw = hostInformationRaw;
+        this.hostInformation = hostInformation;
+        this.edcType = edcType;
+        this.paymentType = paymentType;
+        this.amountInformationRaw = amountInformationRaw;
+        this.amountInformation = amountInformation;
+        this.accountInformationRaw = accountInformationRaw;
+        this.accountInformation = accountInformation;
+        this.traceInformationRaw = traceInformationRaw;
+        this.traceInformation = traceInformation;
+        this.additionalInformationRaw = additionalInformationRaw;
+    }
+
+    static fromList(data: string[]) {
+        //0B011.40000000OKSUCCESS14=0=0=0=0=0=0-2601=0=0=0=0=0=020201118205829074719626549662
+        // [0, B01, 1.40, 000000, OK, SUCCESS1, 1=0=0=0=0=0=0, 4320=0=0=0=0=0=0, 20201118211603, 07471962, 6549662, ]
+        //print(data);
+        return new PaxLocalDetailReport({
+            totalRecord: data[5],
+            recordNumber: data[6],
+            hostInformationRaw: data[7],
+            hostInformation: HostInformation.fromString(data[7]),
+            edcType: data[8],
+            paymentType: data[9],
+            amountInformationRaw: data[11],
+            amountInformation: AmountInformation.fromString(data[11]),
+            accountInformationRaw: data[12],
+            accountInformation: AccountInformation.fromString(data[12]),
+            traceInformationRaw: data[13],
+            traceInformation: TraceInformation.fromString(data[13]),
+            additionalInformationRaw: data[17]
+        });
+    }
+
+    toJson() {
+        return {
+            'totalRecord': this.totalRecord,
+            'recordNumber': this.recordNumber,
+            'hostInformationRaw': this.hostInformationRaw,
+            'hostInformation': this.hostInformation,
+            'edcType': this.edcType,
+            'paymentType': this.paymentType,
+            'amountInformationRaw': this.amountInformationRaw,
+            'amountInformation': this.amountInformation,
+            'accountInformationRaw': this.accountInformationRaw,
+            'accountInformation': this.accountInformation,
+            'traceInformationRaw': this.traceInformationRaw,
+            'traceInformation': this.traceInformation,
+            'additionalInformationRaw': this.additionalInformationRaw
+        }
+    }
+}
+
+export default class PaxReportResponse {
+    static COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE = "R03";
+
+    status: string;
+    command: string;
+    version: string;
+    responseCode: string;
+    responseMessage: string;
+    paxLocalDetailReport: PaxLocalDetailReport;
+
+    constructor({
+                    status,
+                    command,
+                    version,
+                    responseCode,
+                    responseMessage,
+                }) {
+        this.status = status;
+        this.command = command;
+        this.version = version;
+        this.responseCode = responseCode;
+        this.responseMessage = responseMessage;
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(28));
+        if (fields.length >= 5) {
+            const status = fields[0];
+            const command = fields[1];
+            const version = fields[2];
+            const responseCode = fields[3];
+            const responseMessage = fields[4];
+            const result = new PaxReportResponse({
+                status: status,
+                command: command,
+                version: version,
+                responseCode: responseCode,
+                responseMessage: responseMessage,
+            });
+            if (fields.length >= 14 && command === PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE) {
+                // local pax detail
+                result.paxLocalDetailReport = PaxLocalDetailReport.fromList(fields);
+            }
+            // COMMAND PAX BATCH
+            return result;
+        }
+        return null;
+    }
+
+    extraData() {
+        if (
+            this.command === PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE &&
+            this.paxLocalDetailReport != null
+        ) {
+            return this.paxLocalDetailReport.toJson();
+        }
+        return null;
+    }
+
+    toJson() {
+        return {
+            'status': this.status,
+            'command': this.command,
+            'version': this.version,
+            'response_code': this.responseCode,
+            'response_message': this.responseMessage,
+            'extra_data': this.extraData(),
+        }
+    }
+}
+
