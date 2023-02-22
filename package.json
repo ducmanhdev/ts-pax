@@ -1,7 +1,7 @@
 {
   "name": "pax-ts",
   "version": "1.0.0",
-  "license": "ISC",
+  "description": "",
   "main": "disc/index.js",
   "module": "disc/index.mjs",
   "types": "disc/index.d.ts",
@@ -11,6 +11,9 @@
     "build": "pnpm run clean && tsup src/index.ts --format cjs,esm --dts",
     "lint": "tsc"
   },
+  "keywords": [],
+  "author": "ManhND",
+  "license": "ISC",
   "dependencies": {
     "@types/node": "^18.14.0",
     "axios": "^1.3.3",
