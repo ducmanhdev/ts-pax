@@ -1,3 +1,20 @@
+type AdditionalInformationParams = {
+    edcType: string;
+    cardBin: string;
+    programType: string;
+    sn: string;
+    tc: string;
+    tvr: string;
+    aid: string;
+    tsi: string;
+    atc: string;
+    applab: string;
+    iad: string;
+    arc: string;
+    cid: string;
+    cvm: string;
+}
+
 export default class AdditionalInformation {
     edcType: string;
     cardBin: string;
@@ -29,7 +46,7 @@ export default class AdditionalInformation {
                     arc,
                     cid,
                     cvm,
-                }) {
+                }: AdditionalInformationParams) {
         this.edcType = edcType;
         this.cardBin = cardBin;
         this.programType = programType;
@@ -49,20 +66,20 @@ export default class AdditionalInformation {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(31));
         return new AdditionalInformation({
-            edcType: fields[0],
-            cardBin: fields[1],
-            programType: fields[2],
-            sn: fields[3],
-            tc: fields[4],
-            tvr: fields[5],
-            aid: fields[6],
-            tsi: fields[7],
-            atc: fields[8],
-            applab: fields[9],
-            iad: fields[10],
-            arc: fields[11],
-            cid: fields[12],
-            cvm: fields[13],
+            edcType: fields[0]!,
+            cardBin: fields[1]!,
+            programType: fields[2]!,
+            sn: fields[3]!,
+            tc: fields[4]!,
+            tvr: fields[5]!,
+            aid: fields[6]!,
+            tsi: fields[7]!,
+            atc: fields[8]!,
+            applab: fields[9]!,
+            iad: fields[10]!,
+            arc: fields[11]!,
+            cid: fields[12]!,
+            cvm: fields[13]!,
         });
     }
 

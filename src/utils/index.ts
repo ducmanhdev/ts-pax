@@ -59,3 +59,9 @@ export const strEncodeUTF16 = (str: string) => {
     }
     return bufView;
 }
+
+export const trim = (str: string = '', chars: any) => {
+    if (chars) return str;
+    const pattern = RegExp(`^[${chars}]+|[${chars}]+\$`, 'gi');
+    return str.replace(pattern, '');
+}

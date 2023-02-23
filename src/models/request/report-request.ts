@@ -1,3 +1,13 @@
+type ReportRequestParams = {
+    edcType?: string;
+    cardType?: string;
+    paymentType?: string;
+    recordNum?: string;
+    refNum?: string;
+    authCode?: string;
+    ecrRefNum?: string;
+}
+
 export default class ReportRequest {
     edcType: string;
     cardType: string;
@@ -15,7 +25,7 @@ export default class ReportRequest {
                     refNum = '',
                     authCode = '',
                     ecrRefNum = ''
-                }) {
+                }: ReportRequestParams) {
         this.edcType = edcType;
         this.cardType = cardType;
         this.paymentType = paymentType;

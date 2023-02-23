@@ -1,3 +1,12 @@
+type HostInformationParams = {
+    hostResponseCode: string;
+    hostResponseMessage: string;
+    authCode: string;
+    hostReferenceNumber: string;
+    traceNumber: string;
+    batchNumber: string;
+}
+
 export default class HostInformation {
     hostResponseCode: string;
     hostResponseMessage: string;
@@ -13,7 +22,7 @@ export default class HostInformation {
                     hostReferenceNumber,
                     traceNumber,
                     batchNumber,
-                }) {
+                }: HostInformationParams) {
         this.hostResponseCode = hostResponseCode;
         this.hostResponseMessage = hostResponseMessage;
         this.authCode = authCode;
@@ -25,12 +34,12 @@ export default class HostInformation {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(31));
         return new HostInformation({
-            hostResponseCode: fields[0],
-            hostResponseMessage: fields[1],
-            authCode: fields[2],
-            hostReferenceNumber: fields[3],
-            traceNumber: fields[4],
-            batchNumber: fields[5],
+            hostResponseCode: fields[0]!,
+            hostResponseMessage: fields[1]!,
+            authCode: fields[2]!,
+            hostReferenceNumber: fields[3]!,
+            traceNumber: fields[4]!,
+            batchNumber: fields[5]!,
         });
     }
 

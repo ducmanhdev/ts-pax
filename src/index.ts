@@ -3,17 +3,11 @@ import logger from './utils/logger';
 
 import ReportRequest from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
-import PaxRequest from "./models/request/pax-request";
-import AmountInformation from "./models/response/amount-information";
-import TraceInformation from "./models/response/trace-information";
 
 import {
     hexToBase64,
-    base64ToHex,
-    stringToHex,
-    hexToString,
     getLRC,
-    strEncodeUTF16
+    strEncodeUTF16, trim, base64ToHex
 } from "./utils";
 
 import {
@@ -30,8 +24,8 @@ type MakeCallParams = {
     args: any[];
     debug?: boolean;
 }
-type SetConfigParams = {
-    hostIp: string;
+type PaxParams = {
+    host?: string;
     port?: number;
     timeout?: number;
 }
@@ -67,33 +61,43 @@ type DoSalesParams = {
 
 class Pax {
     static PROTO_VERSION = "1.47";
-    host: string;
-    port: number;
-    timeOut: number;
+    static instance: Pax;
+    host: string | undefined;
+    port: number | undefined;
+    timeout: number | undefined;
 
     constructor({
                     host = "127.0.0.1",
                     port = 10009,
-                    timeOut = 120
-                }) {
+                    timeout = 120
+                }: PaxParams) {
+        if (Pax.instance) {
+            Pax.instance.setConfig({
+                host: host,
+                port: port,
+                timeout: timeout
+            });
+            return Pax.instance;
+        }
         this.host = host;
         this.port = port;
-        this.timeOut = timeOut;
+        this.timeout = timeout;
+        Pax.instance = this;
     }
 
-    setConfig({hostIp, port = 10009, timeout = 120}: SetConfigParams) {
-        this.host = hostIp;
+    setConfig({host, port, timeout}: PaxParams) {
+        this.host = host;
         this.port = port;
-        this.timeOut = timeout;
+        this.timeout = timeout;
     }
 
     buildRequest({
                      command,
                      args,
+                     // @ts-ignore
                      debug = false,
                      encode = true
                  }: BuildRequestParams) {
-        console.log(debug);
         let args_str: string = "";
         const processed_args: any[] = [];
 
@@ -109,6 +113,9 @@ class Pax {
         if (args.length > 0) {
             args_str = processed_args.join(String.fromCharCode(28)) + String.fromCharCode(28);
         }
+        console.log(args)
+        console.log(processed_args)
+        console.log(args_str)
 
         ///////// STEP 3
         let cmd: string = command +
@@ -117,117 +124,120 @@ class Pax {
             String.fromCharCode(28) +
             args_str +
             String.fromCharCode(3);
-        cmd = String.fromCharCode(2) + cmd + String.fromCharCode(Number(getLRC(cmd)));
+
+        cmd = String.fromCharCode(2) + cmd + getLRC(cmd);
         /////////////// END
 
-        console.log(strEncodeUTF16(cmd));
-        if (!encode) {
-            return cmd;
-        }
-        const cmdEncode: string = hexToBase64(cmd);
-        return cmdEncode;
+        if (!encode) return cmd;
+        return btoa(cmd.toString());
     }
 
-    parseResponse(response: string) {
+    parseResponse(response: string): PaxResponse | null {
         const lrcFromResponse = response.codePointAt(response.length - 1);
-        const processResponse = response.replace(new RegExp(`^${String.fromCharCode(2)}|${String.fromCharCode(2)}$`, 'gi'), '');
+        const processResponse = trim(response, String.fromCharCode(2));
         const lrc = processResponse.split(String.fromCharCode(3));
-        console.log(lrc.length);
-        const data = response.substring(1, response.length - 2);
         const expected = getLRC(response.substring(1, response.length - 1));
         if (lrcFromResponse?.toString() !== expected) {
             throw new Error(`LRC Mismatch! Got ${lrcFromResponse?.toString()} but expected ${expected.toString()}`);
+        }
+        if (!lrc[0]) {
+            throw new Error(`LRC not found!`);
         }
         return PaxResponse.fromString(lrc[0]);
     }
 
-    parseReportResponse(response: string) {
+    parseReportResponse(response: string): PaxReportResponse | null {
         const lrcFromResponse = response.codePointAt(response.length - 1);
-        const processResponse = response.replace(new RegExp(`^${String.fromCharCode(2)}|${String.fromCharCode(2)}$`, 'gi'), '');
+        const processResponse = trim(response, String.fromCharCode(2));
         const lrc = processResponse.split(String.fromCharCode(3));
-        console.log(lrc.length);
-        const data = response.substring(1, response.length - 2);
         const expected = getLRC(response.substring(1, response.length - 1));
         if (lrcFromResponse?.toString() !== expected) {
             throw new Error(`LRC Mismatch! Got ${lrcFromResponse?.toString()} but expected ${expected.toString()}`);
+        }
+        if (!lrc[0]) {
+            throw new Error(`LRC not found!`);
         }
         return PaxReportResponse.fromString(lrc[0]);
     }
 
     async httpRequest(query: string) {
-        const baseUrl = "http://" + this.host + ":" + this.port.toString();
-        const processUrl = baseUrl + "/?" + query;
-        console.log("Call PAX QUERY:" + processUrl);
-
+        const baseUrl = "http://" + this.host + ":" + this.port?.toString();
+        const processUrl = "/?" + query;
+        // console.log("Call PAX QUERY: " + processUrl);
         return axios({
             method: 'GET',
             baseURL: baseUrl,
             url: processUrl,
-            timeout: this.timeOut * 1000,
+            timeout: this.timeout! * 1000,
         }).then((response: AxiosResponse) => {
+            console.log({'httpRequestResponse': response});
             if (response?.status < 200 || response?.status > 400 || !response?.data) {
-                console.log(`Network Util ERROR : ${processUrl}`);
+                // console.log(`Network Util ERROR: ${processUrl}`);
                 throw new Error("Error while fetching data");
             } else {
                 return response.data;
             }
-        }).catch(() => {
-            console.log(`Network Util ERROR : ${processUrl}`);
+        }).catch((error: any) => {
+            console.log({'httpRequestError': error});
+            // console.log(`Network Util ERROR: ${processUrl}`);
             throw new Error("Error while fetching data");
         });
     }
 
     makeCall({command, args, debug = false}: MakeCallParams): Promise<PaxResponse | null> {
         return new Promise(async resolve => {
-            const query = this.buildRequest({
-                command: command,
-                args: args,
-                debug: debug
-            });
-            console.log("PAX SENT QUERY " + query);
-            logger.info(`PAX REQUEST Query: [${this.host}/${query}] - Command: [${command}] - DATA: [${args}]`);
+            try {
+                const query = this.buildRequest({
+                    command: command,
+                    args: args,
+                    debug: debug
+                });
+                // console.log("PAX SENT QUERY: " + query);
+                logger.info(`PAX REQUEST Query: [${this.host}/?${query}] - Command: [${command}] - DATA: [${args}]`);
 
-            const result = await this.httpRequest(query).catch((error: any) => {
-                logger.error(`PAX REQUEST fail Query: [${this.host}/${query}] Error: ${error.message()}`);
-                return resolve(null);
-            });
+                const result = await this.httpRequest(query).catch((error: any) => {
+                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: ${error.message}`);
+                });
 
-            if (result !== null) {
-                console.log("PAX RESPONSE: " + result);
-                logger.success(`PAX REQUEST Query: [${this.host}/${query}] - RESPONSE: [${result}]`);
+                if (!result) {
+                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
+                }
+                // console.log("PAX RESPONSE: " + result);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
                 const paxResponse = this.parseResponse(result);
-
-                console.log(paxResponse?.toString());
-                logger.success(`PAX REQUEST Query: [${this.host}/${query}] - RESPONSE: [${paxResponse?.toString()}]`);
+                // console.log(paxResponse?.toString());
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${paxResponse?.toString()}]`);
                 return resolve(paxResponse)
+            } catch (error: any) {
+                logger.error(error.message);
+                return resolve(null);
             }
-            logger.error(`PAX REQUEST fail Query: [${this.host}/${query}] Error: 'Result null!'`);
-            return resolve(null);
         })
     }
 
-    makeCallReport({command, args, debug}: MakeCallReportParams): Promise<PaxResponse | null> {
+    makeCallReport({command, args, debug}: MakeCallReportParams): Promise<PaxReportResponse | null> {
         return new Promise(async resolve => {
-            const query = this.buildRequest({command: command, args: args, debug: debug});
-            console.log("PAX SENT QUERY " + query);
-            logger.info(`PAX REQUEST Query: [${this.host}/${query}] - Command: [${command}] - DATA: [${args}]`);
+            try {
+                const query = this.buildRequest({command: command, args: args, debug: debug});
+                // console.log("PAX SENT QUERY: " + query);
+                logger.info(`PAX REQUEST Query: [${this.host}/?${query}] - Command: [${command}] - DATA: [${args}]`);
 
-            const result = await this.httpRequest(query).catch((error: any) => {
-                logger.error(`PAX REQUEST fail Query: [${this.host}/${query}] Error: ${error.message}`);
-                return resolve(null);
-            });
-
-            if (result !== null) {
-                console.log("PAX RESPONSE: " + result);
-                logger.success(`PAX REQUEST Query: [${this.host}/${query}] - RESPONSE: [${result}]`);
+                const result = await this.httpRequest(query).catch((error: any) => {
+                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: ${error.message}`);
+                });
+                if (!result) {
+                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
+                }
+                // console.log("PAX RESPONSE: " + result);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
                 const paxReportResponse = this.parseReportResponse(result);
-                console.log(paxReportResponse?.toString());
-                logger.success(`PAX REQUEST Query: [${this.host}/${query}] - RESPONSE: [${paxReportResponse?.toString()}]`);
+                // console.log(paxReportResponse?.toString());
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${paxReportResponse?.toString()}]`);
                 return resolve(paxReportResponse);
+            } catch (error: any) {
+                logger.error(error.message);
+                return resolve(null);
             }
-
-            logger.error(`PAX REQUEST fail Query: [${this.host}/${query}] Error: 'Result null!'`);
-            return resolve(null);
         })
     }
 
@@ -250,7 +260,7 @@ class Pax {
         })
     }
 
-    async doSales({orderID, amount, tips}: DoSalesParams): Promise<PaxResponse> {
+    async doSales({orderID, amount, tips}: DoSalesParams): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_sales] - Order_ID: [${orderID}] - DATA: [Amount: ${amount} - tips: ${tips}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
@@ -277,7 +287,7 @@ class Pax {
         });
     }
 
-    async doAdjust({reference, transaction, amount}: DoAdjustParams): Promise<PaxResponse> {
+    async doAdjust({reference, transaction, amount}: DoAdjustParams): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_adjust] - Order_ID: [${reference}] - DATA: [tran_id: ${transaction} - tips: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: Math.round(amount * 100).toString()
@@ -303,7 +313,7 @@ class Pax {
         });
     }
 
-    async doReturn(amount: number): Promise<PaxResponse> {
+    async doReturn(amount: number): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_return] - DATA: [amount: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
@@ -326,7 +336,7 @@ class Pax {
         });
     }
 
-    async doVoid({reference, transaction}: DoVoidParams): Promise<PaxResponse> {
+    async doVoid({reference, transaction}: DoVoidParams): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_void] - Order_id: ${reference} DATA: [Tran_id: ${transaction}]`);
         const traceRequest = new TraceInfo({
             transactionNumber: transaction,
@@ -350,14 +360,14 @@ class Pax {
         });
     }
 
-    async batchClose(): Promise<PaxResponse> {
+    async batchClose(): Promise<PaxResponse | null> {
         return this.makeCall({
             command: 'B00',
             args: [],
         });
     }
 
-    async localDetailReport(orderId: string): Promise<PaxReportResponse> {
+    async localDetailReport(orderId: string): Promise<PaxReportResponse | null> {
         // EX Request : http://10.1.1.24:10009?AlIwMhwxLjQ1HDAwHBwcHBwcNzc2HANn
         // http://10.1.1.24:10009?AlIwMhwxLjQ1HDAwHBwcHBwcHANR
         // Message Request   [02] R02 [28] 1.45 [28] EDCType [28] CardType [28] PaymentType [28] RecordNum [28] RefNum [28] AuthCode [28] ECRRefNum [28] [03] LRC
@@ -398,3 +408,6 @@ class Pax {
         });
     }
 }
+
+(window as any).Pax = Pax;
+export default Pax;

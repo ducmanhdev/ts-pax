@@ -1,3 +1,13 @@
+type CommercialInformationParams = {
+    poNumber: string;
+    customerCode: string;
+    taxExempt: string;
+    taxExemptID: string;
+    merchantTaxID: string;
+    destinationZipCode: string;
+    productDescription: string;
+}
+
 export default class CommercialInformation {
     poNumber: string;
     customerCode: string;
@@ -15,7 +25,7 @@ export default class CommercialInformation {
                     merchantTaxID,
                     destinationZipCode,
                     productDescription,
-                }) {
+                }: CommercialInformationParams) {
         this.poNumber = poNumber;
         this.customerCode = customerCode;
         this.taxExempt = taxExempt;
@@ -28,13 +38,13 @@ export default class CommercialInformation {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(31));
         return new CommercialInformation({
-            poNumber: fields[0],
-            customerCode: fields[0],
-            taxExempt: fields[0],
-            taxExemptID: fields[0],
-            merchantTaxID: fields[0],
-            destinationZipCode: fields[0],
-            productDescription: fields[0],
+            poNumber: fields[0]!,
+            customerCode: fields[0]!,
+            taxExempt: fields[0]!,
+            taxExemptID: fields[0]!,
+            merchantTaxID: fields[0]!,
+            destinationZipCode: fields[0]!,
+            productDescription: fields[0]!,
         });
     }
 

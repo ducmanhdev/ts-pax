@@ -1,3 +1,14 @@
+type AmountInformationParams = {
+    approveAmount: string;
+    amountDue: string;
+    tipAmount: string;
+    cashBackAmount: string;
+    merchantFee_surchargeFee: string;
+    taxAmount: string;
+    balance1: string;
+    balance2: string;
+}
+
 export default class AmountInformation {
     approveAmount: string;
     amountDue: string;
@@ -17,7 +28,7 @@ export default class AmountInformation {
                     taxAmount,
                     balance1,
                     balance2,
-                }) {
+                }: AmountInformationParams) {
         this.approveAmount = approveAmount;
         this.amountDue = amountDue;
         this.tipAmount = tipAmount;
@@ -31,14 +42,14 @@ export default class AmountInformation {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(31));
         return new AmountInformation({
-            approveAmount: fields[0],
-            amountDue: fields[1],
-            tipAmount: fields[2],
-            cashBackAmount: fields[3],
-            merchantFee_surchargeFee: fields[4],
-            taxAmount: fields[5],
-            balance1: fields[6],
-            balance2: fields[7],
+            approveAmount: fields[0]!,
+            amountDue: fields[1]!,
+            tipAmount: fields[2]!,
+            cashBackAmount: fields[3]!,
+            merchantFee_surchargeFee: fields[4]!,
+            taxAmount: fields[5]!,
+            balance1: fields[6]!,
+            balance2: fields[7]!,
         });
     }
 

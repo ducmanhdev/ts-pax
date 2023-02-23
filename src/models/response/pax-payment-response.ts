@@ -3,6 +3,22 @@ import TraceInformation from "./trace-information";
 import AmountInformation from "./amount-information";
 import AccountInformation from "./account-information";
 
+type PaxPaymentResponseParams = {
+    hostInformationRaw: string;
+    hostInformation: HostInformation;
+    transactionType: string;
+    amountInformationRaw: string;
+    accountInformationRaw: string;
+    amountInformation: AmountInformation;
+    accountInformation: AccountInformation;
+    traceInformationRaw: string;
+    traceInformation: TraceInformation;
+    aVSinformationRaw: string;
+    commercialInformationRaw: string;
+    motoEcommerceRaw: string;
+    additionalInformationRaw: string;
+}
+
 export default class PaxPaymentResponse {
     hostInformationRaw: string;
     hostInformation: HostInformation;
@@ -32,7 +48,7 @@ export default class PaxPaymentResponse {
                     commercialInformationRaw,
                     motoEcommerceRaw,
                     additionalInformationRaw,
-                }) {
+                }: PaxPaymentResponseParams) {
         this.hostInformation = hostInformation;
         this.hostInformationRaw = hostInformationRaw;
         this.transactionType = transactionType;
@@ -50,7 +66,7 @@ export default class PaxPaymentResponse {
 
     static fromList(data: string[]) {
         /*
-            hostInfomationRaw: fields[5] as String,
+            hostInformationRaw: fields[5] as String,
             transactionType: fields[6] as String,
             amountInformationRaw: fields[7] as String,
             accountInformationRaw: fields[8] as String,
@@ -62,19 +78,19 @@ export default class PaxPaymentResponse {
             additionalInformationRaw: fields[13] as String,
         */
         return new PaxPaymentResponse({
-            hostInformationRaw: data[5],
-            hostInformation: HostInformation.fromString(data[5]),
-            transactionType: data[6],
-            amountInformationRaw: data[7],
-            amountInformation: AmountInformation.fromString(data[7]),
-            accountInformationRaw: data[8],
-            accountInformation: AccountInformation.fromString(data[8]),
-            traceInformationRaw: data[9],
-            traceInformation: TraceInformation.fromString(data[9]),
-            aVSinformationRaw: data[10],
-            commercialInformationRaw: data[11],
-            motoEcommerceRaw: data[12],
-            additionalInformationRaw: data[13],
+            hostInformationRaw: data[5]!,
+            hostInformation: HostInformation.fromString(data[5]!),
+            transactionType: data[6]!,
+            amountInformationRaw: data[7]!,
+            amountInformation: AmountInformation.fromString(data[7]!),
+            accountInformationRaw: data[8]!,
+            accountInformation: AccountInformation.fromString(data[8]!),
+            traceInformationRaw: data[9]!,
+            traceInformation: TraceInformation.fromString(data[9]!),
+            aVSinformationRaw: data[10]!,
+            commercialInformationRaw: data[11]!,
+            motoEcommerceRaw: data[12]!,
+            additionalInformationRaw: data[13]!,
         });
     }
 
@@ -84,7 +100,7 @@ export default class PaxPaymentResponse {
             'hostInformationRaw': this.hostInformationRaw,
             'transactionType': this.transactionType,
             'amountInformationRaw': this.amountInformationRaw,
-            'amountInfomation': this.amountInformation,
+            'amountInformation': this.amountInformation,
             'accountInformation': this.accountInformation,
             'accountInformationRaw': this.accountInformationRaw,
             'traceInformationRaw': this.traceInformationRaw,

@@ -1,3 +1,12 @@
+type AmountInfoParams = {
+    transactionAmount?: string;
+    tipAmount?: string;
+    cashBackAmount?: string;
+    merchantFee?: string;
+    taxAmount?: string;
+    fuelAmount?: string;
+}
+
 export default class AmountInfo {
     transactionAmount: string;
     tipAmount: string;
@@ -13,7 +22,7 @@ export default class AmountInfo {
                     merchantFee = '',
                     taxAmount = '',
                     fuelAmount = ''
-                }) {
+                }: AmountInfoParams) {
         this.transactionAmount = transactionAmount;
         this.tipAmount = tipAmount;
         this.cashBackAmount = cashBackAmount;

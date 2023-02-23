@@ -1,3 +1,13 @@
+type BatchCountParams = {
+    creditCount: string;
+    debitCount: string;
+    ebtCount: string;
+    giftCount: string;
+    loyaltyCount: string;
+    cashCount: string;
+    checkCount: string;
+}
+
 export default class BatchCount {
     creditCount: string;
     debitCount: string;
@@ -15,7 +25,7 @@ export default class BatchCount {
                     loyaltyCount,
                     cashCount,
                     checkCount,
-                }) {
+                }: BatchCountParams) {
         this.creditCount = creditCount;
         this.debitCount = debitCount;
         this.ebtCount = ebtCount;
@@ -28,13 +38,13 @@ export default class BatchCount {
     static fromString(res: string) {
         const fields = res.split("=");
         return new BatchCount({
-            creditCount: fields[0],
-            debitCount: fields[1],
-            ebtCount: fields[2],
-            giftCount: fields[3],
-            loyaltyCount: fields[4],
-            cashCount: fields[5],
-            checkCount: fields[6],
+            creditCount: fields[0]!,
+            debitCount: fields[1]!,
+            ebtCount: fields[2]!,
+            giftCount: fields[3]!,
+            loyaltyCount: fields[4]!,
+            cashCount: fields[5]!,
+            checkCount: fields[6]!,
         });
     }
 

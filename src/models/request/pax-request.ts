@@ -1,3 +1,3 @@
-export default class PaxRequest {
+type PaxRequestParams = {}
 
-}
+export default class PaxRequest {}

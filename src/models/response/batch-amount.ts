@@ -1,3 +1,13 @@
+type BatchAmountParams = {
+    creditAmount: string;
+    debitAmount: string;
+    ebtAmount: string;
+    giftAmount: string;
+    loyaltyAmount: string;
+    cashAmount: string;
+    checkAmount: string;
+}
+
 export default class BatchAmount {
     creditAmount: string;
     debitAmount: string;
@@ -15,7 +25,7 @@ export default class BatchAmount {
                     loyaltyAmount,
                     cashAmount,
                     checkAmount,
-                }) {
+                }: BatchAmountParams) {
         this.creditAmount = creditAmount;
         this.debitAmount = debitAmount;
         this.ebtAmount = ebtAmount;
@@ -28,13 +38,13 @@ export default class BatchAmount {
     static fromString(res: string) {
         const fields = res.split("=");
         return new BatchAmount({
-            creditAmount: fields[0],
-            debitAmount: fields[1],
-            ebtAmount: fields[2],
-            giftAmount: fields[3],
-            loyaltyAmount: fields[4],
-            cashAmount: fields[5],
-            checkAmount: fields[6],
+            creditAmount: fields[0]!,
+            debitAmount: fields[1]!,
+            ebtAmount: fields[2]!,
+            giftAmount: fields[3]!,
+            loyaltyAmount: fields[4]!,
+            cashAmount: fields[5]!,
+            checkAmount: fields[6]!,
         });
     }
 

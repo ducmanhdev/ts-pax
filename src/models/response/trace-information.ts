@@ -1,3 +1,9 @@
+type TraceInformationParams = {
+    transactionNumber: string;
+    referenceNumber: string;
+    timeStamp: string;
+}
+
 export default class TraceInformation {
     transactionNumber: string;
     referenceNumber: string;
@@ -7,7 +13,7 @@ export default class TraceInformation {
                     transactionNumber,
                     referenceNumber,
                     timeStamp,
-                }) {
+                }: TraceInformationParams) {
         this.transactionNumber = transactionNumber;
         this.referenceNumber = referenceNumber;
         this.timeStamp = timeStamp;
@@ -16,9 +22,9 @@ export default class TraceInformation {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(31));
         return new TraceInformation({
-            transactionNumber: fields[0],
-            referenceNumber: fields[1],
-            timeStamp: fields[2],
+            transactionNumber: fields[0]!,
+            referenceNumber: fields[1]!,
+            timeStamp: fields[2]!,
         });
     }
 

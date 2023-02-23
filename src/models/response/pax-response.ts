@@ -1,6 +1,14 @@
 import PaxBatchResponse from "./pax-batch-response";
 import PaxPaymentResponse from "./pax-payment-response";
 
+type PaxResponseParams = {
+    status: string;
+    command: string;
+    version: string;
+    responseCode: string;
+    responseMessage: string;
+}
+
 export default class PaxResponse {
     static COMMAND_TYPE_PAYMENT = "T01";
     static COMMAND_TYPE_BATCH = "B01";
@@ -10,9 +18,9 @@ export default class PaxResponse {
     version: string;
     responseCode: string;
     responseMessage: string;
-    amount: number;
-    paxPaymentResponse: PaxPaymentResponse;
-    paxBatchResponse: PaxBatchResponse;
+    amount: number | undefined;
+    paxPaymentResponse: PaxPaymentResponse | undefined;
+    paxBatchResponse: PaxBatchResponse | undefined;
 
     constructor({
                     status,
@@ -20,7 +28,7 @@ export default class PaxResponse {
                     version,
                     responseCode,
                     responseMessage
-                }) {
+                }: PaxResponseParams) {
         this.status = status;
         this.command = command;
         this.version = version;
@@ -31,11 +39,11 @@ export default class PaxResponse {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(28));
         if (fields.length >= 5) {
-            const status = fields[0];
-            const command = fields[1];
-            const version = fields[2];
-            const responseCode = fields[3];
-            const responseMessage = fields[4];
+            const status = fields[0]!;
+            const command = fields[1]!;
+            const version = fields[2]!;
+            const responseCode = fields[3]!;
+            const responseMessage = fields[4]!;
             const result = new PaxResponse({
                 status: status,
                 command: command,
@@ -48,9 +56,9 @@ export default class PaxResponse {
                 fields.length === 14 &&
                 command === PaxResponse.COMMAND_TYPE_PAYMENT
             ) {
-                const dataAmount = fields[7].split(String.fromCharCode(31));
+                const dataAmount = fields[7]!.split(String.fromCharCode(31));
                 result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
-                result.amount = parseInt(dataAmount[0]);
+                result.amount = parseInt(dataAmount[0]!);
             } else if (
                 fields.length === 12 &&
                 command === PaxResponse.COMMAND_TYPE_BATCH) {
@@ -84,4 +92,5 @@ export default class PaxResponse {
     }
 }
 
-class PaxResponseCode {}
+class PaxResponseCode {
+}

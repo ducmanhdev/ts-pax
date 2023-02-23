@@ -1,3 +1,17 @@
+type AccountInformationParams = {
+    account: string;
+    entryMode: string;
+    expiryDate: string;
+    ebtType: string;
+    voucherNumber: string;
+    newAccountNo: string;
+    cardType: string;
+    cardHolder: string;
+    cvdApprovalCode: string;
+    cvdMessage: string;
+    cardPresentIndicator: string;
+}
+
 export default class AccountInformation {
     account: string;
     entryMode: string;
@@ -23,7 +37,7 @@ export default class AccountInformation {
                     cvdApprovalCode,
                     cvdMessage,
                     cardPresentIndicator,
-                }) {
+                }: AccountInformationParams) {
         this.account = account;
         this.entryMode = entryMode;
         this.expiryDate = expiryDate;
@@ -40,17 +54,17 @@ export default class AccountInformation {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(31));
         return new AccountInformation({
-            account: fields[0],
-            entryMode: fields[1],
-            expiryDate: fields[2],
-            ebtType: fields[3],
-            voucherNumber: fields[4],
-            newAccountNo: fields[5],
-            cardType: fields[6],
-            cardHolder: fields[7],
-            cvdApprovalCode: fields[8],
-            cvdMessage: fields[9],
-            cardPresentIndicator: fields[10],
+            account: fields[0]!,
+            entryMode: fields[1]!,
+            expiryDate: fields[2]!,
+            ebtType: fields[3]!,
+            voucherNumber: fields[4]!,
+            newAccountNo: fields[5]!,
+            cardType: fields[6]!,
+            cardHolder: fields[7]!,
+            cvdApprovalCode: fields[8]!,
+            cvdMessage: fields[9]!,
+            cardPresentIndicator: fields[10]!,
         });
     }
 

@@ -1,3 +1,12 @@
+type TrackInfoParams = {
+    referenceNumber?: string;
+    invoiceNumber?: string;
+    authCode?: string;
+    transactionNumber?: string;
+    timeStamp?: string;
+    ecrTransId?: string;
+}
+
 export default class TrackInfo {
     referenceNumber: string;
     invoiceNumber: string;
@@ -13,7 +22,7 @@ export default class TrackInfo {
                     transactionNumber = '',
                     timeStamp = '',
                     ecrTransId = ''
-                }) {
+                }: TrackInfoParams) {
         this.referenceNumber = referenceNumber;
         this.invoiceNumber = invoiceNumber;
         this.authCode = authCode;

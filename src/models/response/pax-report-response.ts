@@ -3,23 +3,39 @@ import AmountInformation from "./amount-information";
 import HostInformation from "./host-information";
 import TraceInformation from "./trace-information";
 
+type PaxLocalDetailReportParams = {
+    totalRecord: string;
+    recordNumber: string;
+    hostInformationRaw: string;
+    hostInformation: HostInformation;
+    edcType: string;
+    paymentType: string;
+    amountInformationRaw: string;
+    amountInformation: AmountInformation;
+    accountInformationRaw: string;
+    accountInformation: AccountInformation;
+    traceInformationRaw: string;
+    traceInformation: TraceInformation;
+    additionalInformationRaw: string;
+}
+
 class PaxLocalDetailReport {
     totalRecord: string; //5
     recordNumber: string; //6
-    hostInformationRaw: HostInformation; //7
-    hostInformation: string; //7
+    hostInformationRaw: string; //7
+    hostInformation: HostInformation; //7
     edcType: string; //8
     paymentType: string; //9
-    unknown1: string; //10
+    // unknown1: string; //10
     amountInformationRaw: string; //11
     amountInformation: AmountInformation; //11
     accountInformationRaw: string; // 12
     accountInformation: AccountInformation; //12
     traceInformationRaw: string; //13
     traceInformation: TraceInformation; //13
-    unknown2: string; //14
-    unknown3: string; //15
-    unknown4: string; //16
+    // unknown2: string; //14
+    // unknown3: string; //15
+    // unknown4: string; //16
     additionalInformationRaw: string; //17
 
     constructor({
@@ -36,7 +52,7 @@ class PaxLocalDetailReport {
                     traceInformationRaw,
                     traceInformation,
                     additionalInformationRaw,
-                }) {
+                }: PaxLocalDetailReportParams) {
         this.totalRecord = totalRecord;
         this.recordNumber = recordNumber;
         this.hostInformationRaw = hostInformationRaw;
@@ -57,19 +73,19 @@ class PaxLocalDetailReport {
         // [0, B01, 1.40, 000000, OK, SUCCESS1, 1=0=0=0=0=0=0, 4320=0=0=0=0=0=0, 20201118211603, 07471962, 6549662, ]
         //print(data);
         return new PaxLocalDetailReport({
-            totalRecord: data[5],
-            recordNumber: data[6],
-            hostInformationRaw: data[7],
-            hostInformation: HostInformation.fromString(data[7]),
-            edcType: data[8],
-            paymentType: data[9],
-            amountInformationRaw: data[11],
-            amountInformation: AmountInformation.fromString(data[11]),
-            accountInformationRaw: data[12],
-            accountInformation: AccountInformation.fromString(data[12]),
-            traceInformationRaw: data[13],
-            traceInformation: TraceInformation.fromString(data[13]),
-            additionalInformationRaw: data[17]
+            totalRecord: data[5]!,
+            recordNumber: data[6]!,
+            hostInformationRaw: data[7]!,
+            hostInformation: HostInformation.fromString(data[7]!),
+            edcType: data[8]!,
+            paymentType: data[9]!,
+            amountInformationRaw: data[11]!,
+            amountInformation: AmountInformation.fromString(data[11]!),
+            accountInformationRaw: data[12]!,
+            accountInformation: AccountInformation.fromString(data[12]!),
+            traceInformationRaw: data[13]!,
+            traceInformation: TraceInformation.fromString(data[13]!),
+            additionalInformationRaw: data[17]!
         });
     }
 
@@ -92,6 +108,14 @@ class PaxLocalDetailReport {
     }
 }
 
+type PaxReportResponseParams = {
+    status: string;
+    command: string;
+    version: string;
+    responseCode: string;
+    responseMessage: string;
+}
+
 export default class PaxReportResponse {
     static COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE = "R03";
 
@@ -100,7 +124,7 @@ export default class PaxReportResponse {
     version: string;
     responseCode: string;
     responseMessage: string;
-    paxLocalDetailReport: PaxLocalDetailReport;
+    paxLocalDetailReport: PaxLocalDetailReport | undefined;
 
     constructor({
                     status,
@@ -108,7 +132,7 @@ export default class PaxReportResponse {
                     version,
                     responseCode,
                     responseMessage,
-                }) {
+                }: PaxReportResponseParams) {
         this.status = status;
         this.command = command;
         this.version = version;
@@ -119,11 +143,11 @@ export default class PaxReportResponse {
     static fromString(res: string) {
         const fields = res.split(String.fromCharCode(28));
         if (fields.length >= 5) {
-            const status = fields[0];
-            const command = fields[1];
-            const version = fields[2];
-            const responseCode = fields[3];
-            const responseMessage = fields[4];
+            const status = fields[0]!;
+            const command = fields[1]!;
+            const version = fields[2]!;
+            const responseCode = fields[3]!;
+            const responseMessage = fields[4]!;
             const result = new PaxReportResponse({
                 status: status,
                 command: command,

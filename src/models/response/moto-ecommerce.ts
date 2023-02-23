@@ -1,3 +1,3 @@
-export default class MotoEcommerce {
+type MotoEcommerceParams = {}
 
-}
+export default class MotoEcommerce {}
