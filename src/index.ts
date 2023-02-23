@@ -24,11 +24,13 @@ type MakeCallParams = {
     args: any[];
     debug?: boolean;
 }
+
 type PaxParams = {
     host?: string;
     port?: number;
     timeout?: number;
 }
+
 type BuildRequestParams = {
     command: string;
     args: any[];
