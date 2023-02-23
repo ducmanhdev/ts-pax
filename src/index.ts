@@ -5,14 +5,14 @@ import ReportRequest from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
 
 import {
-    hexToBase64,
     getLRC,
-    strEncodeUTF16, trim, base64ToHex
+    trim
 } from "./utils";
 
 import {
     PAX_EDC_TYPE,
-    PAYMENT_TRANS_TYPE, REPORT_TRAN_TYPE
+    PAYMENT_TRANS_TYPE,
+    REPORT_TRAN_TYPE
 } from "./constants";
 
 import TraceInfo from "./models/request/track-info";
