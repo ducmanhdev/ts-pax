@@ -6,7 +6,8 @@ import PaxReportResponse from "./models/response/pax-report-response";
 
 import {
     getLRC,
-    trim
+    trim,
+    hexToBase64, stringToHex, strEncodeUTF16, base64ToHex
 } from "./utils";
 
 import {
@@ -62,7 +63,7 @@ type DoSalesParams = {
 }
 
 class Pax {
-    static PROTO_VERSION = "1.47";
+    static PROTO_VERSION = "1.28";
     static instance: Pax;
     host: string | undefined;
     port: number | undefined;
@@ -100,61 +101,52 @@ class Pax {
                      debug = false,
                      encode = true
                  }: BuildRequestParams) {
-        let args_str: string = "";
-        const processed_args: any[] = [];
-
         ////////// Step 1
-        args.forEach((element: any) => {
-            if (Array.isArray(element)) {
-                return processed_args.push(element.join(String.fromCharCode(31)));
-            }
-            processed_args.push(element);
+        const processed_args = args.map((arg: any) => {
+            return Array.isArray(arg) ? arg.join(String.fromCharCode(31)) : arg
         });
 
         ////////// STEP 2
-        if (args.length > 0) {
-            args_str = processed_args.join(String.fromCharCode(28)) + String.fromCharCode(28);
-        }
-        console.log(args)
-        console.log(processed_args)
-        console.log(args_str)
+        const args_str = processed_args.join(String.fromCharCode(28));
 
         ///////// STEP 3
-        let cmd: string = command +
+        let cmd: string = String.fromCharCode(2) + command +
             String.fromCharCode(28) +
             Pax.PROTO_VERSION +
             String.fromCharCode(28) +
             args_str +
             String.fromCharCode(3);
-
-        cmd = String.fromCharCode(2) + cmd + getLRC(cmd);
+        cmd = cmd + getLRC(cmd);
         /////////////// END
 
         if (!encode) return cmd;
-        return btoa(cmd.toString());
+        return btoa(cmd);
     }
 
     parseResponse(response: string): PaxResponse | null {
-        const lrcFromResponse = response.codePointAt(response.length - 1);
+        const checkParams = stringToHex(response).split(" ").pop();
+        const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
+        const lrcFromResponse = getLRC(checkParams!);
         const processResponse = trim(response, String.fromCharCode(2));
         const lrc = processResponse.split(String.fromCharCode(3));
-        const expected = getLRC(response.substring(1, response.length - 1));
-        if (lrcFromResponse?.toString() !== expected) {
-            throw new Error(`LRC Mismatch! Got ${lrcFromResponse?.toString()} but expected ${expected.toString()}`);
+        if (lrcFromResponse !== redundancyCheck) {
+            throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
         }
         if (!lrc[0]) {
             throw new Error(`LRC not found!`);
         }
+        console.log({'lrc[0]': lrc[0]});
         return PaxResponse.fromString(lrc[0]);
     }
 
     parseReportResponse(response: string): PaxReportResponse | null {
-        const lrcFromResponse = response.codePointAt(response.length - 1);
+        const checkParams = stringToHex(response).split(" ").pop();
+        const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
+        const lrcFromResponse = getLRC(checkParams!);
         const processResponse = trim(response, String.fromCharCode(2));
         const lrc = processResponse.split(String.fromCharCode(3));
-        const expected = getLRC(response.substring(1, response.length - 1));
-        if (lrcFromResponse?.toString() !== expected) {
-            throw new Error(`LRC Mismatch! Got ${lrcFromResponse?.toString()} but expected ${expected.toString()}`);
+        if (lrcFromResponse !== redundancyCheck) {
+            throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
         }
         if (!lrc[0]) {
             throw new Error(`LRC not found!`);
@@ -204,11 +196,13 @@ class Pax {
                 if (!result) {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
                 }
+
+                console.log({result})
                 // console.log("PAX RESPONSE: " + result);
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE1: [${result}]`);
                 const paxResponse = this.parseResponse(result);
                 // console.log(paxResponse?.toString());
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${paxResponse?.toString()}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE2: [${paxResponse?.toString()}]`);
                 return resolve(paxResponse)
             } catch (error: any) {
                 logger.error(error.message);
@@ -269,8 +263,8 @@ class Pax {
             tipAmount: (tips === 0 || tips === null || isNaN(tips)) ? '0' : tips.toString(),
         });
         const traceRequest = new TraceInfo({
+            referenceNumber: orderID,
             invoiceNumber: orderID,
-            referenceNumber: orderID
         });
         const args = [
             PAYMENT_TRANS_TYPE.TRAN_TYPE_SALE,

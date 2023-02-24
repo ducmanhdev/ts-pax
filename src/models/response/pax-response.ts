@@ -44,6 +44,7 @@ export default class PaxResponse {
             const version = fields[2]!;
             const responseCode = fields[3]!;
             const responseMessage = fields[4]!;
+            console.log({status})
             const result = new PaxResponse({
                 status: status,
                 command: command,
