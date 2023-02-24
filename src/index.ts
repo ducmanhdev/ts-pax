@@ -199,10 +199,10 @@ class Pax {
 
                 console.log({result})
                 // console.log("PAX RESPONSE: " + result);
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE1: [${result}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
                 const paxResponse = this.parseResponse(result);
                 // console.log(paxResponse?.toString());
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE2: [${paxResponse?.toString()}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
                 return resolve(paxResponse)
             } catch (error: any) {
                 logger.error(error.message);

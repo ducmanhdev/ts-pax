@@ -9,7 +9,7 @@
     "prepublishOnly": "npm run build",
     "clean": "rimraf ./dist ./bundle",
     "build": "rimraf ./dist && tsc",
-    "bundle": "pnpm run clean && tsc && webpack",
+    "bundle": "pnpm run clean && webpack",
     "lint": "eslint '**/*.{ts,tsx}' --max-warnings 0",
     "serve": "http-server"
   },
