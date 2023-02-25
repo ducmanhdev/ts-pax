@@ -1,15 +1,31 @@
 const logger = {
     info(message: string) {
-        console.log(`%cInfo: ${message}`, "border: 1px solid #3498db; border-radius: 4px; padding: 4px 8px");
+        console.log(
+            '%cInfo',
+            'background: #3498db; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
+            message
+        );
     },
     warning(message: string) {
-        console.log(`%cWarning: ${message}`, "border: 1px solid #f1c40f; border-radius: 4px; padding: 4px 8px");
+        console.log(
+            '%cWarning',
+            'background: #f1c40f; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
+            message
+        );
     },
     error(message: string) {
-        console.log(`%cError: ${message}`, "border: 1px solid #c0392b; border-radius: 4px; padding: 4px 8px");
+        console.log(
+            '%cError',
+            'background: red; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
+            message
+        );
     },
     success(message: string) {
-        console.log(`%cSuccess: ${message}`, "border: 1px solid #2ecc71; border-radius: 4px; padding: 4px 8px");
+        console.log(
+            '%cSuccess',
+            'background: #2ecc71; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
+            message
+        );
     }
 }
 export default logger;
