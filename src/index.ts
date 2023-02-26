@@ -7,7 +7,7 @@ import PaxReportResponse from "./models/response/pax-report-response";
 import {
     getLRC,
     trim,
-    hexToBase64, stringToHex, strEncodeUTF16, base64ToHex
+    stringToHex
 } from "./utils";
 
 import {
@@ -101,23 +101,19 @@ class Pax {
                      debug = false,
                      encode = true
                  }: BuildRequestParams) {
-        ////////// Step 1
-        const processed_args = args.map((arg: any) => {
+        const argsStr = args.map((arg: any) => {
             return Array.isArray(arg) ? arg.join(String.fromCharCode(31)) : arg
-        });
+        }).join(String.fromCharCode(28));
 
-        ////////// STEP 2
-        const args_str = processed_args.join(String.fromCharCode(28));
-
-        ///////// STEP 3
-        let cmd: string = String.fromCharCode(2) + command +
+        let cmd: string =
+            String.fromCharCode(2) +
+            command +
             String.fromCharCode(28) +
             Pax.PROTO_VERSION +
             String.fromCharCode(28) +
-            args_str +
+            argsStr +
             String.fromCharCode(3);
         cmd = cmd + getLRC(cmd);
-        /////////////// END
 
         if (!encode) return cmd;
         return btoa(cmd);
@@ -135,7 +131,6 @@ class Pax {
         if (!lrc[0]) {
             throw new Error(`LRC not found!`);
         }
-        console.log({'lrc[0]': lrc[0]});
         return PaxResponse.fromString(lrc[0]);
     }
 
@@ -196,8 +191,6 @@ class Pax {
                 if (!result) {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
                 }
-
-                console.log({result})
                 // console.log("PAX RESPONSE: " + result);
                 logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
                 const paxResponse = this.parseResponse(result);

@@ -1,5 +1,6 @@
 import PaxBatchResponse from "./pax-batch-response";
 import PaxPaymentResponse from "./pax-payment-response";
+import {hexToString, stringToHex} from "../../utils";
 
 type PaxResponseParams = {
     status: string;
@@ -37,14 +38,21 @@ export default class PaxResponse {
     }
 
     static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(28));
+        const len = stringToHex(res).indexOf("03");
+        const hex = stringToHex(res).slice(0, len).split(/02|1c/);
+        const fields = hex.map((item: any) => {
+            if (item.indexOf("1f") > 0) {
+                const subHex = item.split("1f");
+                return subHex.map((subItem: any) => hexToString(subItem));
+            }
+            return hexToString(item);
+        });
         if (fields.length >= 5) {
-            const status = fields[0]!;
-            const command = fields[1]!;
-            const version = fields[2]!;
-            const responseCode = fields[3]!;
-            const responseMessage = fields[4]!;
-            console.log({status})
+            const status = fields[1]!;
+            const command = fields[2]!;
+            const version = fields[3]!;
+            const responseCode = fields[4]!;
+            const responseMessage = fields[5]!;
             const result = new PaxResponse({
                 status: status,
                 command: command,
