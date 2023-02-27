@@ -8,15 +8,14 @@
     <title>Document</title>
 </head>
 <body>
-<button onclick="doSALE()">SALE</button>
-<button onclick="doADJUST()">ADJUST</button>
-<button onclick="doVOID()">VOID</button>
-<button onclick="doBATCH()">BATCH CLOSE</button>
-<button onclick="doRETURN()">RETURN</button>
-<button onclick="doRETRIEVE()">RETRIEVE</button>
-<button onclick="doCANCEL()">CANCEL</button>
-<button onclick="doDISPOSE()">DISPOSE</button>
-<button onclick="doGETSTATUS()">GET STATUS</button>
+<button onclick="doLocalDetailReport()">LOCAL DETAIL REPORT</button>
+<button onclick="doLocalTotalReport()">LOCAL TOTAL REPORT</button>
+<button onclick="doMenu()">MENU</button>
+<button onclick="doSale()">SALE</button>
+<button onclick="doAdjust()">ADJUST</button>
+<button onclick="doVoid()">VOID</button>
+<button onclick="doBatch()">BATCH CLOSE</button>
+<button onclick="doReturn()">RETURN</button>
 
 <script src="http://localhost:8080/bundle/index.js"></script>
 <script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
@@ -24,83 +23,61 @@
 <script>
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
+
     const pax = new Pax({
         host: '192.168.1.145',
         port: '10009',
     });
 
-    async function doSALE() {
+    async function doLocalTotalReport() {
+        const result = await pax.localTotalReport();
+    }
+
+    async function doLocalDetailReport() {
+        const result = await pax.localDetailReport();
+    }
+
+    async function doMenu() {
+        const result = await pax.doMenu();
+    }
+
+    async function doSale() {
         const result = await pax.doSales({
-            amount: 500000,
+            amount: 50000,
             tips: 3000,
             orderID: 1000
         });
     }
 
-    // async function doADJUST() {
-    //     let adjustInput = {
-    //         amount: Math.floor(Math.random() * 5000),
-    //         orderId: "1",
-    //         paymentId: "1"
-    //     }
-    //     let result = await a.doAdjust(adjustInput)
-    //     console.log("hihihi");
-    //     console.log(result);
-    // }
-    //
-    // async function doVOID() {
-    //     let voidInput = {
-    //         orderId: "1",
-    //         paymentId: "1"
-    //     }
-    //     let result = await a.doVoid(voidInput)
-    //     console.log("hihihi");
-    //     console.log(result);
-    // }
-    //
-    // async function doRETURN() {
-    //     let returnInput = {
-    //         amount: 500,
-    //         orderId: "1",
-    //         paymentId: "1"
-    //     }
-    //     let result = await a.doRefund(returnInput)
-    //     console.log("hihihi");
-    //     console.log(result);
-    // }
-    //
-    // async function doBATCH() {
-    //     let result = await a.doBatchClose()
-    //     console.log("hihihi");
-    //     console.log(result);
-    // }
-    //
-    // async function doCANCEL() {
-    //     let result = await a.cancel();
-    //     console.log(result);
-    // }
-    //
-    // async function doDISPOSE() {
-    //     let result = await a.dispose();
-    //     console.log(result);
-    // }
-    //
-    // async function doGETSTATUS() {
-    //     let result = await a.getDeviceStatus();
-    //     console.log(result);
-    // }
-    //
-    // async function doRETRIEVE() {
-    //     let refId = "1000";
-    //     console.log('zdasda');
-    //     console.log(refId);
-    //     let retrieveInput = {
-    //         refId: refId,
-    //     }
-    //     let result = await a.doRetrieve(retrieveInput);
-    //     console.log("hihi");
-    //     console.log(result);
-    // }
+    async function doAdjust() {
+        const result = await pax.doAdjust({
+            reference: "1",
+            transaction: "1",
+            amount: Math.floor(Math.random() * 5000)
+        })
+    }
+
+    async function doVoid() {
+        const result = await pax.doVoid({
+            reference: "1",
+            transaction: "1",
+        })
+    }
+
+    async function doBatch() {
+        const result = await pax.doBatchClose()
+    }
+
+    async function doCancel() {
+        let result = await pax.cancel();
+        console.log(result);
+    }
+
+    async function doReturn() {
+        const result = await pax.doReturn({
+            amount: 10
+        });
+    }
 </script>
 </body>
 </html>

@@ -51,8 +51,7 @@ export default class AccountInformation {
         this.cardPresentIndicator = cardPresentIndicator;
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new AccountInformation({
             account: fields[0]!,
             entryMode: fields[1]!,
@@ -66,6 +65,11 @@ export default class AccountInformation {
             cvdMessage: fields[9]!,
             cardPresentIndicator: fields[10]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return AccountInformation.fromList(fields);
     }
 
     toJson() {

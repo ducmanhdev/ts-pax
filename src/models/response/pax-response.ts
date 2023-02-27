@@ -47,6 +47,10 @@ export default class PaxResponse {
             }
             return hexToString(item);
         });
+        console.log({rawResponse: res});
+        console.log({len});
+        console.log({hex});
+        console.log({fields});
         if (fields.length >= 5) {
             const status = fields[1]!;
             const command = fields[2]!;
@@ -60,7 +64,6 @@ export default class PaxResponse {
                 responseCode: responseCode,
                 responseMessage: responseMessage,
             });
-            // COMMAND PAX PAYMENT
             if (
                 fields.length === 14 &&
                 command === PaxResponse.COMMAND_TYPE_PAYMENT
@@ -73,7 +76,7 @@ export default class PaxResponse {
                 command === PaxResponse.COMMAND_TYPE_BATCH) {
                 result.paxBatchResponse = PaxBatchResponse.fromList(fields);
             }
-            // COMMAND PAX BATCH
+            console.log({parseResponse: result});
             return result;
         }
         return null;

@@ -18,8 +18,11 @@ export const base64ToHex = (str: any) => {
 export const stringToHex = (response: any) => {
     let responseHex = "";
     for (let i = 0; i < response.length; i++) {
-        if (responseHex === "") responseHex = response.charCodeAt(i).toString(16).length < 2 ? '0' + response.charCodeAt(i).toString(16) : response.charCodeAt(i).toString(16);
-        else responseHex += response.charCodeAt(i).toString(16).length < 2 ? " " + '0' + response.charCodeAt(i).toString(16) : " " + response.charCodeAt(i).toString(16);
+        if (responseHex === "") {
+            responseHex = response.charCodeAt(i).toString(16).length < 2 ? '0' + response.charCodeAt(i).toString(16) : response.charCodeAt(i).toString(16);
+        } else {
+            responseHex += response.charCodeAt(i).toString(16).length < 2 ? " " + '0' + response.charCodeAt(i).toString(16) : " " + response.charCodeAt(i).toString(16);
+        }
     }
     return responseHex;
 };
@@ -36,18 +39,18 @@ export const hexToString = (response: any) => {
 
 export const getLRC = (params: string) => {
     let lrc = 0;
-    for(let i=1; i< params.length; i++){
-        const type_of = typeof(params[i]);
-        if(type_of == "string"){
+    for (let i = 1; i < params.length; i++) {
+        const type_of = typeof (params[i]);
+        if (type_of == "string") {
             let element = params[i]!.split("");
-            for(let ii=0; ii<element.length; ii++){
+            for (let ii = 0; ii < element.length; ii++) {
                 lrc ^= element[ii]!.charCodeAt(0);
             }
-        }else{
+        } else {
             lrc ^= params[i] as any;
         }
     }
-    return (lrc>0)?String.fromCharCode(lrc):0;
+    return (lrc > 0) ? String.fromCharCode(lrc) : 0;
 };
 
 export const strEncodeUTF16 = (str: string) => {

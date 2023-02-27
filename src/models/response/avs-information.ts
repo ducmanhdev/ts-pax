@@ -15,12 +15,16 @@ export default class AvsInformation {
         this.avsMessage = avsMessage
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new AvsInformation({
             avsApprovalCode: fields[0]!,
             avsMessage: fields[1]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return AvsInformation.fromList(fields);
     }
 
     toJson() {

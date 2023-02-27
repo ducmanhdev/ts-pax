@@ -35,8 +35,7 @@ export default class BatchCount {
         this.checkCount = checkCount;
     }
 
-    static fromString(res: string) {
-        const fields = res.split("=");
+    static fromList(fields: string[]) {
         return new BatchCount({
             creditCount: fields[0]!,
             debitCount: fields[1]!,
@@ -46,6 +45,11 @@ export default class BatchCount {
             cashCount: fields[5]!,
             checkCount: fields[6]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split("=");
+        return BatchCount.fromList(fields);
     }
 
     toJson() {

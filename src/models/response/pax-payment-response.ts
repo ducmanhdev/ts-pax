@@ -64,19 +64,7 @@ export default class PaxPaymentResponse {
         this.additionalInformationRaw = additionalInformationRaw;
     }
 
-    static fromList(data: string[]) {
-        /*
-            hostInformationRaw: fields[5] as String,
-            transactionType: fields[6] as String,
-            amountInformationRaw: fields[7] as String,
-            accountInformationRaw: fields[8] as String,
-            traceInformationRaw: fields[9] as String,
-            traceInformation: TraceInformation.fromString(fields[9] as String),
-            aVSinformationRaw: fields[10] as String,
-            commercialInformationRaw: fields[11] as String,
-            motoEcommerceRaw: fields[12] as String,
-            additionalInformationRaw: fields[13] as String,
-        */
+    static fromList(data: any[]) {
         return new PaxPaymentResponse({
             hostInformationRaw: data[5]!,
             hostInformation: HostInformation.fromString(data[5]!),
@@ -86,7 +74,7 @@ export default class PaxPaymentResponse {
             accountInformationRaw: data[8]!,
             accountInformation: AccountInformation.fromString(data[8]!),
             traceInformationRaw: data[9]!,
-            traceInformation: TraceInformation.fromString(data[9]!),
+            traceInformation: TraceInformation.fromList(data[9]!),
             aVSinformationRaw: data[10]!,
             commercialInformationRaw: data[11]!,
             motoEcommerceRaw: data[12]!,

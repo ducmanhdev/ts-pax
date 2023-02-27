@@ -35,8 +35,7 @@ export default class CommercialInformation {
         this.productDescription = productDescription;
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new CommercialInformation({
             poNumber: fields[0]!,
             customerCode: fields[0]!,
@@ -46,6 +45,11 @@ export default class CommercialInformation {
             destinationZipCode: fields[0]!,
             productDescription: fields[0]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return CommercialInformation.fromList(fields);
     }
 
     toJson() {

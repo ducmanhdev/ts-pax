@@ -19,13 +19,17 @@ export default class TraceInformation {
         this.timeStamp = timeStamp;
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new TraceInformation({
             transactionNumber: fields[0]!,
             referenceNumber: fields[1]!,
             timeStamp: fields[2]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return TraceInformation.fromList(fields);
     }
 
     toJson() {

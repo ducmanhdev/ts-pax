@@ -1,4 +1,4 @@
-type ReportRequestParams = {
+export type ReportRequestParams = {
     edcType?: string;
     cardType?: string;
     paymentType?: string;

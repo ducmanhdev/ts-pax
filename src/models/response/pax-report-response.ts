@@ -69,10 +69,7 @@ class PaxLocalDetailReport {
         this.additionalInformationRaw = additionalInformationRaw;
     }
 
-    static fromList(data: string[]) {
-        //0B011.40000000OKSUCCESS14=0=0=0=0=0=0-2601=0=0=0=0=0=020201118205829074719626549662
-        // [0, B01, 1.40, 000000, OK, SUCCESS1, 1=0=0=0=0=0=0, 4320=0=0=0=0=0=0, 20201118211603, 07471962, 6549662, ]
-        //print(data);
+    static fromList(data: any[]) {
         return new PaxLocalDetailReport({
             totalRecord: data[5]!,
             recordNumber: data[6]!,
@@ -83,9 +80,9 @@ class PaxLocalDetailReport {
             amountInformationRaw: data[11]!,
             amountInformation: AmountInformation.fromString(data[11]!),
             accountInformationRaw: data[12]!,
-            accountInformation: AccountInformation.fromString(data[12]!),
+            accountInformation: AccountInformation.fromList(data[12]!),
             traceInformationRaw: data[13]!,
-            traceInformation: TraceInformation.fromString(data[13]!),
+            traceInformation: TraceInformation.fromList(data[13]!),
             additionalInformationRaw: data[17]!
         });
     }
@@ -151,6 +148,10 @@ export default class PaxReportResponse {
             }
             return hexToString(item);
         });
+        console.log({rawResponse: res});
+        console.log({len});
+        console.log({hex});
+        console.log({fields});
         if (fields.length >= 5) {
             const status = fields[1]!;
             const command = fields[2]!;
@@ -169,6 +170,7 @@ export default class PaxReportResponse {
                 result.paxLocalDetailReport = PaxLocalDetailReport.fromList(fields);
             }
             // COMMAND PAX BATCH
+            console.log({'parseResponse': result})
             return result;
         }
         return null;

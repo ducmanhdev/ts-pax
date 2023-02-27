@@ -63,8 +63,7 @@ export default class AdditionalInformation {
         this.cvm = cvm;
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new AdditionalInformation({
             edcType: fields[0]!,
             cardBin: fields[1]!,
@@ -81,6 +80,11 @@ export default class AdditionalInformation {
             cid: fields[12]!,
             cvm: fields[13]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return AdditionalInformation.fromList(fields);
     }
 
     toJson() {

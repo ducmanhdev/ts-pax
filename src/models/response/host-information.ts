@@ -31,8 +31,7 @@ export default class HostInformation {
         this.batchNumber = batchNumber;
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new HostInformation({
             hostResponseCode: fields[0]!,
             hostResponseMessage: fields[1]!,
@@ -41,6 +40,11 @@ export default class HostInformation {
             traceNumber: fields[4]!,
             batchNumber: fields[5]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return HostInformation.fromList(fields);
     }
 
     toJson() {

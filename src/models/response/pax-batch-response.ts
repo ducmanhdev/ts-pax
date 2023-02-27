@@ -35,14 +35,11 @@ export default class PaxBatchResponse {
         this.mid = mid;
     }
 
-    static fromList(data: string[]) {
-        //0B011.40000000OKSUCCESS14=0=0=0=0=0=0-2601=0=0=0=0=0=020201118205829074719626549662
-        // [0, B01, 1.40, 000000, OK, SUCCESS1, 1=0=0=0=0=0=0, 4320=0=0=0=0=0=0, 20201118211603, 07471962, 6549662, ]
-        //print(data);
+    static fromList(data: any) {
         return new PaxBatchResponse({
             messageRaw: data[5]!,
-            batchCount: BatchCount.fromString(data[6]!),
-            batchAmount: BatchAmount.fromString(data[7]!),
+            batchCount: BatchCount.fromList(data[6]!),
+            batchAmount: BatchAmount.fromList(data[7]!),
             timestamp: data[8]!,
             tid: data[9]!,
             mid: data[10]!

@@ -1,7 +1,7 @@
 import axios, {AxiosResponse} from "axios";
 import logger from './utils/logger';
 
-import ReportRequest from "./models/request/report-request";
+import ReportRequest, {ReportRequestParams} from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
 
 import {
@@ -11,6 +11,7 @@ import {
 } from "./utils";
 
 import {
+    PAX_CARD_TYPE,
     PAX_EDC_TYPE,
     PAYMENT_TRANS_TYPE,
     REPORT_TRAN_TYPE
@@ -20,47 +21,55 @@ import TraceInfo from "./models/request/track-info";
 import PaxResponse from "./models/response/pax-response";
 import AmountInfo from "./models/request/amount-info";
 
-type MakeCallParams = {
+type MakeCallRequest = {
     command: string;
     args: any[];
     debug?: boolean;
 }
 
-type PaxParams = {
+type PaxRequest = {
     host?: string;
     port?: number;
     timeout?: number;
 }
 
-type BuildRequestParams = {
+type BuildRequestRequest = {
     command: string;
     args: any[];
     debug?: boolean;
     encode?: boolean;
 }
 
-type MakeCallReportParams = {
+type MakeCallReportRequest = {
     command: string;
     args: any[];
     debug?: boolean;
 }
 
-type DoVoidParams = {
+type DoVoidRequest = {
     reference: string;
     transaction: string;
 }
 
-type DoAdjustParams = {
+type DoAdjustRequest = {
     reference: string;
     transaction: string;
     amount: number;
 }
 
-type DoSalesParams = {
+type DoSalesRequest = {
     orderID: string;
     amount: number;
     tips: number;
 }
+
+type DoReturnRequest = {
+    amount: number
+}
+
+type LocalDetailReportRequest = Pick<ReportRequestParams, "edcType" | "cardType" | "ecrRefNum" | "refNum">;
+
+type LocalTotalReportRequest = Pick<ReportRequestParams, "edcType" | "cardType">;
 
 class Pax {
     static PROTO_VERSION = "1.28";
@@ -73,7 +82,7 @@ class Pax {
                     host = "127.0.0.1",
                     port = 10009,
                     timeout = 120
-                }: PaxParams) {
+                }: PaxRequest) {
         if (Pax.instance) {
             Pax.instance.setConfig({
                 host: host,
@@ -88,7 +97,7 @@ class Pax {
         Pax.instance = this;
     }
 
-    setConfig({host, port, timeout}: PaxParams) {
+    setConfig({host, port, timeout}: PaxRequest) {
         this.host = host;
         this.port = port;
         this.timeout = timeout;
@@ -100,7 +109,7 @@ class Pax {
                      // @ts-ignore
                      debug = false,
                      encode = true
-                 }: BuildRequestParams) {
+                 }: BuildRequestRequest) {
         const argsStr = args.map((arg: any) => {
             return Array.isArray(arg) ? arg.join(String.fromCharCode(31)) : arg
         }).join(String.fromCharCode(28));
@@ -122,50 +131,38 @@ class Pax {
     parseResponse(response: string): PaxResponse | null {
         const checkParams = stringToHex(response).split(" ").pop();
         const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
-        const lrcFromResponse = getLRC(checkParams!);
-        const processResponse = trim(response, String.fromCharCode(2));
-        const lrc = processResponse.split(String.fromCharCode(3));
+        const lrcFromResponse = getLRC(checkParams);
         if (lrcFromResponse !== redundancyCheck) {
             throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
         }
-        if (!lrc[0]) {
-            throw new Error(`LRC not found!`);
-        }
-        return PaxResponse.fromString(lrc[0]);
+        return PaxResponse.fromString(response);
     }
 
     parseReportResponse(response: string): PaxReportResponse | null {
         const checkParams = stringToHex(response).split(" ").pop();
         const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
-        const lrcFromResponse = getLRC(checkParams!);
-        const processResponse = trim(response, String.fromCharCode(2));
-        const lrc = processResponse.split(String.fromCharCode(3));
+        const lrcFromResponse = getLRC(checkParams);
         if (lrcFromResponse !== redundancyCheck) {
             throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
         }
-        if (!lrc[0]) {
-            throw new Error(`LRC not found!`);
-        }
-        return PaxReportResponse.fromString(lrc[0]);
+        return PaxReportResponse.fromString(response);
     }
 
     async httpRequest(query: string) {
         const baseUrl = "http://" + this.host + ":" + this.port?.toString();
         const processUrl = "/?" + query;
-        // console.log("Call PAX QUERY: " + processUrl);
+
         return axios({
             method: 'GET',
             baseURL: baseUrl,
             url: processUrl,
             timeout: this.timeout! * 1000,
         }).then((response: AxiosResponse) => {
-            console.log({'httpRequestResponse': response});
             if (response?.status < 200 || response?.status > 400 || !response?.data) {
                 // console.log(`Network Util ERROR: ${processUrl}`);
                 throw new Error("Error while fetching data");
-            } else {
-                return response.data;
             }
+            return response.data;
         }).catch((error: any) => {
             console.log({'httpRequestError': error});
             // console.log(`Network Util ERROR: ${processUrl}`);
@@ -173,7 +170,7 @@ class Pax {
         });
     }
 
-    makeCall({command, args, debug = false}: MakeCallParams): Promise<PaxResponse | null> {
+    makeCall({command, args, debug = false}: MakeCallRequest): Promise<PaxResponse | null> {
         return new Promise(async resolve => {
             try {
                 const query = this.buildRequest({
@@ -181,7 +178,6 @@ class Pax {
                     args: args,
                     debug: debug
                 });
-                // console.log("PAX SENT QUERY: " + query);
                 logger.info(`PAX REQUEST Query: [${this.host}/?${query}] - Command: [${command}] - DATA: [${args}]`);
 
                 const result = await this.httpRequest(query).catch((error: any) => {
@@ -191,40 +187,36 @@ class Pax {
                 if (!result) {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
                 }
-                // console.log("PAX RESPONSE: " + result);
                 logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
                 const paxResponse = this.parseResponse(result);
-                // console.log(paxResponse?.toString());
                 logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
-                return resolve(paxResponse)
+                return resolve(paxResponse);
             } catch (error: any) {
                 logger.error(error.message);
+                console.error(error)
                 return resolve(null);
             }
         })
     }
 
-    makeCallReport({command, args, debug}: MakeCallReportParams): Promise<PaxReportResponse | null> {
+    makeCallReport({command, args, debug}: MakeCallReportRequest): Promise<PaxReportResponse | null> {
         return new Promise(async resolve => {
             try {
                 const query = this.buildRequest({command: command, args: args, debug: debug});
-                // console.log("PAX SENT QUERY: " + query);
                 logger.info(`PAX REQUEST Query: [${this.host}/?${query}] - Command: [${command}] - DATA: [${args}]`);
-
                 const result = await this.httpRequest(query).catch((error: any) => {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: ${error.message}`);
                 });
                 if (!result) {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
                 }
-                // console.log("PAX RESPONSE: " + result);
                 logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
                 const paxReportResponse = this.parseReportResponse(result);
-                // console.log(paxReportResponse?.toString());
                 logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${paxReportResponse?.toString()}]`);
                 return resolve(paxReportResponse);
             } catch (error: any) {
                 logger.error(error.message);
+                console.error(error);
                 return resolve(null);
             }
         })
@@ -249,7 +241,7 @@ class Pax {
         })
     }
 
-    async doSales({orderID, amount, tips}: DoSalesParams): Promise<PaxResponse | null> {
+    async doSales({orderID, amount, tips}: DoSalesRequest): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_sales] - Order_ID: [${orderID}] - DATA: [Amount: ${amount} - tips: ${tips}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
@@ -276,7 +268,7 @@ class Pax {
         });
     }
 
-    async doAdjust({reference, transaction, amount}: DoAdjustParams): Promise<PaxResponse | null> {
+    async doAdjust({reference, transaction, amount}: DoAdjustRequest): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_adjust] - Order_ID: [${reference}] - DATA: [tran_id: ${transaction} - tips: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: Math.round(amount * 100).toString()
@@ -302,7 +294,7 @@ class Pax {
         });
     }
 
-    async doReturn(amount: number): Promise<PaxResponse | null> {
+    async doReturn({amount}: DoReturnRequest): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_return] - DATA: [amount: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
@@ -325,7 +317,7 @@ class Pax {
         });
     }
 
-    async doVoid({reference, transaction}: DoVoidParams): Promise<PaxResponse | null> {
+    async doVoid({reference, transaction}: DoVoidRequest): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_void] - Order_id: ${reference} DATA: [Tran_id: ${transaction}]`);
         const traceRequest = new TraceInfo({
             transactionNumber: transaction,
@@ -349,50 +341,40 @@ class Pax {
         });
     }
 
-    async batchClose(): Promise<PaxResponse | null> {
+    async doBatchClose(): Promise<PaxResponse | null> {
         return this.makeCall({
             command: 'B00',
             args: [],
         });
     }
 
-    async localDetailReport(orderId: string): Promise<PaxReportResponse | null> {
-        // EX Request : http://10.1.1.24:10009?AlIwMhwxLjQ1HDAwHBwcHBwcNzc2HANn
-        // http://10.1.1.24:10009?AlIwMhwxLjQ1HDAwHBwcHBwcHANR
-        // Message Request   [02] R02 [28] 1.45 [28] EDCType [28] CardType [28] PaymentType [28] RecordNum [28] RefNum [28] AuthCode [28] ECRRefNum [28] [03] LRC
-        // Message Request ERCNum:  [02] R02 [28] 1.45 [28] 00 [28] [28] [28] [28] [28] [28] 776 [28] [03] LRC
-        // Message Request RefNum:  [02] R02 [28] 1.45 [28] 00 [28] [28] [28] [28] 2 [28] [28] 776 [28] [03] LRC
-
-        // Response [02]
-        // 0
-        // [1c]R03
-        // [1c]1.40
-        // [1c]000000
-        // [1c]OK
-
-
-        // [1c]1 --total_record
-        // [1c]0 -- record_number
-        // [1c]0[1f]DEMO APPROVED[1f]000000[1f]88888888[1f][1f][1f]   [host_response,message,auth_code,host_code, , , ,]
-        // [1c]01 -- edc_type
-        // [1c]01 -- payment_type
-        // [1c]
-        // [1c] 4500  [1f]  0 [1f] 0  [1f] 0  [1f]  0 [1f]  0 [1f]  12048 [1f]  2022  [amount,0,0,0,0,0,remain_balance,extra_balance]
-        // [1c]1034[1f]4[1f]0823[1f][1f][1f][1f]03[1f]PHAM/LINH                 [1f][1f][1f]0       [account_information]
-        // [1c]2[1f]776[1f]20210412043119[1f]776      [trace_infomation]
-        // [1c][1f]
-        // [1c]
-        // [1c]
-        // [1c]CARDBIN=372727[1f]SN=53344914[1f]TC=FEDD2F8578265FEE[1f]TVR=0000008000[1f]AID=A000000025010801[1f]TSI=E800[1f]ATC=055A[1f]APPLAB=AMERICAN EXPRESS[1f]IAD=064C010321B802[1f]ARC=Z3[1f]CID=00[1f]CVM=6
-        // [03]C
-
-        logger.info(`PAX REQUEST : [local_detail_report] - Order_ID: [${orderId}]`);
+    async localDetailReport({
+                                edcType = PAX_EDC_TYPE.ALL,
+                                cardType = PAX_CARD_TYPE.ALL,
+                                ecrRefNum = '',
+                                refNum = ''
+                            }: LocalDetailReportRequest = {}): Promise<PaxReportResponse | null> {
+        logger.info(`PAX REQUEST : [local_detail_report]`);
         const reportRequest = new ReportRequest({
-            edcType: PAX_EDC_TYPE.ALL,
-            ecrRefNum: orderId
+            edcType: edcType,
+            cardType: cardType,
+            ecrRefNum: ecrRefNum,
+            refNum: refNum,
         });
         return this.makeCallReport({
             command: REPORT_TRAN_TYPE.LOCALDETAILREPORT,
+            args: reportRequest.toListData()
+        });
+    }
+
+    async localTotalReport({
+                               edcType = PAX_EDC_TYPE.ALL,
+                           }: LocalTotalReportRequest = {}): Promise<PaxReportResponse | null> {
+        const reportRequest = new ReportRequest({
+            edcType: edcType,
+        });
+        return this.makeCallReport({
+            command: REPORT_TRAN_TYPE.LOCALTOTALREPORT,
             args: reportRequest.toListData()
         });
     }

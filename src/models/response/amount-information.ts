@@ -39,8 +39,7 @@ export default class AmountInformation {
         this.balance2 = balance2;
     }
 
-    static fromString(res: string) {
-        const fields = res.split(String.fromCharCode(31));
+    static fromList(fields: string[]) {
         return new AmountInformation({
             approveAmount: fields[0]!,
             amountDue: fields[1]!,
@@ -51,6 +50,11 @@ export default class AmountInformation {
             balance1: fields[6]!,
             balance2: fields[7]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split(String.fromCharCode(31));
+        return AmountInformation.fromList(fields);
     }
 
     toJson() {

@@ -35,8 +35,7 @@ export default class BatchAmount {
         this.checkAmount = checkAmount;
     }
 
-    static fromString(res: string) {
-        const fields = res.split("=");
+    static fromList(fields: string[]) {
         return new BatchAmount({
             creditAmount: fields[0]!,
             debitAmount: fields[1]!,
@@ -46,6 +45,11 @@ export default class BatchAmount {
             cashAmount: fields[5]!,
             checkAmount: fields[6]!,
         });
+    }
+
+    static fromString(res: string) {
+        const fields = res.split("=");
+        return BatchAmount.fromList(fields);
     }
 
     toJson() {
