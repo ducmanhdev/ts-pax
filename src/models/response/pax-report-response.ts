@@ -166,10 +166,8 @@ export default class PaxReportResponse {
                 responseMessage: responseMessage,
             });
             if (fields.length >= 14 && command === PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE) {
-                // local pax detail
                 result.paxLocalDetailReport = PaxLocalDetailReport.fromList(fields);
             }
-            // COMMAND PAX BATCH
             console.log({'parseResponse': result})
             return result;
         }
