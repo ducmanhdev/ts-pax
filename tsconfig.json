@@ -1,10 +1,50 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "target": "es5",
-    "lib" : ["es2015", "dom"],
-    "outDir": "dist",
-    "sourceMap": true,
+    "composite": true,
     "declaration": true,
-    "module": "commonjs"
-  }
+    "declarationMap": true,
+    "pretty": true,
+    "moduleResolution": "node",
+    "target": "es6",
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "noEmitOnError": false,
+    "experimentalDecorators": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "importHelpers": true,
+    "strictNullChecks": true,
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2015",
+      "es2016",
+      "es2017",
+      "es2018",
+      "es2019",
+      "es2020",
+      "esnext.asynciterable"
+    ],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "rootDir": "src"
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/test/*"
+  ]
 }

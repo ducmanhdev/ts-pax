@@ -130,7 +130,7 @@ class Pax {
     parseResponse(response: string): PaxResponse | null {
         const checkParams = stringToHex(response).split(" ").pop();
         const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
-        const lrcFromResponse = getLRC(checkParams);
+        const lrcFromResponse = getLRC(checkParams!);
         if (lrcFromResponse !== redundancyCheck) {
             throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
         }
@@ -140,7 +140,7 @@ class Pax {
     parseReportResponse(response: string): PaxReportResponse | null {
         const checkParams = stringToHex(response).split(" ").pop();
         const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
-        const lrcFromResponse = getLRC(checkParams);
+        const lrcFromResponse = getLRC(checkParams!);
         if (lrcFromResponse !== redundancyCheck) {
             throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
         }
