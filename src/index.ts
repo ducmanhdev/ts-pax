@@ -57,7 +57,7 @@ type DoAdjustRequest = {
 }
 
 type DoSalesRequest = {
-    orderID: string;
+    orderID?: string;
     amount: number;
     tips: number;
 }
