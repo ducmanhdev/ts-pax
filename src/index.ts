@@ -6,7 +6,6 @@ import PaxReportResponse from "./models/response/pax-report-response";
 
 import {
     getLRC,
-    trim,
     stringToHex
 } from "./utils";
 
@@ -159,13 +158,11 @@ class Pax {
             timeout: this.timeout! * 1000,
         }).then((response: AxiosResponse) => {
             if (response?.status < 200 || response?.status > 400 || !response?.data) {
-                // console.log(`Network Util ERROR: ${processUrl}`);
                 throw new Error("Error while fetching data");
             }
             return response.data;
         }).catch((error: any) => {
             console.log({'httpRequestError': error});
-            // console.log(`Network Util ERROR: ${processUrl}`);
             throw new Error("Error while fetching data");
         });
     }
@@ -183,11 +180,10 @@ class Pax {
                 const result = await this.httpRequest(query).catch((error: any) => {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: ${error.message}`);
                 });
-
                 if (!result) {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
                 }
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
                 const paxResponse = this.parseResponse(result);
                 logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
                 return resolve(paxResponse);
@@ -210,9 +206,9 @@ class Pax {
                 if (!result) {
                     throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
                 }
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${result}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
                 const paxReportResponse = this.parseReportResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${paxReportResponse?.toString()}]`);
+                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(paxReportResponse)}]`);
                 return resolve(paxReportResponse);
             } catch (error: any) {
                 logger.error(error.message);
@@ -354,7 +350,6 @@ class Pax {
                                 ecrRefNum = '',
                                 refNum = ''
                             }: LocalDetailReportRequest = {}): Promise<PaxReportResponse | null> {
-        logger.info(`PAX REQUEST : [local_detail_report]`);
         const reportRequest = new ReportRequest({
             edcType: edcType,
             cardType: cardType,

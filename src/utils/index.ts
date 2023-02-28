@@ -53,16 +53,6 @@ export const getLRC = (params: string) => {
     return (lrc > 0) ? String.fromCharCode(lrc) : 0;
 };
 
-export const strEncodeUTF16 = (str: string) => {
-    const strLength = str.length;
-    const buf = new ArrayBuffer(strLength * 2);
-    let bufView = new Uint16Array(buf);
-    for (let i = 0; i < strLength; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-    return bufView;
-}
-
 export const trim = (str: string = '', chars: any) => {
     if (chars) return str;
     const pattern = RegExp(`^[${chars}]+|[${chars}]+\$`, 'gi');

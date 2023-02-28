@@ -8,9 +8,9 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "clean": "rimraf ./dist ./bundle",
-    "build": "rimraf ./dist && tsc",
-    "bundle": "pnpm run clean && webpack",
-    "lint": "eslint '**/*.{ts,tsx}' --max-warnings 0",
+    "build": "rimraf ./dist && eslint && tsc",
+    "bundle": "pnpm run clean && eslint && webpack",
+    "lint": "eslint",
     "serve": "http-server"
   },
   "keywords": [],

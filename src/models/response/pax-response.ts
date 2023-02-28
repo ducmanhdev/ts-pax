@@ -41,7 +41,7 @@ export default class PaxResponse {
         const len = stringToHex(res).indexOf("03");
         const hex = stringToHex(res).slice(0, len).split(/02|1c/);
         const fields = hex.map((item: any) => {
-            if (item.indexOf("1f") > 0) {
+            if (item.search("1f") > 0) {
                 const subHex = item.split("1f");
                 return subHex.map((subItem: any) => hexToString(subItem));
             }
