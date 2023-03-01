@@ -20,49 +20,49 @@ import TraceInfo from "./models/request/track-info";
 import PaxResponse from "./models/response/pax-response";
 import AmountInfo from "./models/request/amount-info";
 
-type MakeCallRequest = {
+export type PaxRequest = {
+    ip: string;
+    port: number;
+    timeout?: number;
+}
+
+export type MakeCallRequest = {
     command: string;
     args: any[];
     debug?: boolean;
 }
 
-type PaxRequest = {
-    host?: string;
-    port?: number;
-    timeout?: number;
-}
-
-type BuildRequestRequest = {
+export type BuildRequestRequest = {
     command: string;
     args: any[];
     debug?: boolean;
     encode?: boolean;
 }
 
-type MakeCallReportRequest = {
+export type MakeCallReportRequest = {
     command: string;
     args: any[];
     debug?: boolean;
 }
 
-type DoVoidRequest = {
+export type DoVoidRequest = {
     reference: string;
     transaction: string;
 }
 
-type DoAdjustRequest = {
+export type DoAdjustRequest = {
     reference: string;
     transaction: string;
     amount: number;
 }
 
-type DoSalesRequest = {
+export type DoSalesRequest = {
     orderID?: string;
     amount: number;
     tips: number;
 }
 
-type DoReturnRequest = {
+export type DoReturnRequest = {
     amount: number
 }
 
@@ -70,34 +70,34 @@ type LocalDetailReportRequest = Pick<ReportRequestParams, "edcType" | "cardType"
 
 type LocalTotalReportRequest = Pick<ReportRequestParams, "edcType" | "cardType">;
 
-class Pax {
+export default class Pax {
     static PROTO_VERSION = "1.28";
     static instance: Pax;
-    host: string | undefined;
+    ip: string | undefined;
     port: number | undefined;
     timeout: number | undefined;
 
     constructor({
-                    host = "127.0.0.1",
-                    port = 10009,
+                    ip,
+                    port,
                     timeout = 120
                 }: PaxRequest) {
         if (Pax.instance) {
             Pax.instance.setConfig({
-                host: host,
+                ip: ip,
                 port: port,
                 timeout: timeout
             });
             return Pax.instance;
         }
-        this.host = host;
+        this.ip = ip;
         this.port = port;
         this.timeout = timeout;
         Pax.instance = this;
     }
 
-    setConfig({host, port, timeout}: PaxRequest) {
-        this.host = host;
+    setConfig({ip, port, timeout}: PaxRequest) {
+        this.ip = ip;
         this.port = port;
         this.timeout = timeout;
     }
@@ -148,7 +148,7 @@ class Pax {
     }
 
     async httpRequest(query: string) {
-        const baseUrl = "http://" + this.host + ":" + this.port?.toString();
+        const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
         const processUrl = "/?" + query;
 
         return axios({
@@ -175,17 +175,17 @@ class Pax {
                     args: args,
                     debug: debug
                 });
-                logger.info(`PAX REQUEST Query: [${this.host}/?${query}] - Command: [${command}] - DATA: [${args}]`);
+                logger.info(`PAX REQUEST Query: [${this.ip}/?${query}] - Command: [${command}] - DATA: [${args}]`);
 
                 const result = await this.httpRequest(query).catch((error: any) => {
-                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: ${error.message}`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: ${error.message}`);
                 });
                 if (!result) {
-                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: 'Result null!'`);
                 }
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
                 const paxResponse = this.parseResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
                 return resolve(paxResponse);
             } catch (error: any) {
                 logger.error(error.message);
@@ -199,16 +199,16 @@ class Pax {
         return new Promise(async resolve => {
             try {
                 const query = this.buildRequest({command: command, args: args, debug: debug});
-                logger.info(`PAX REQUEST Query: [${this.host}/?${query}] - Command: [${command}] - DATA: [${args}]`);
+                logger.info(`PAX REQUEST Query: [${this.ip}/?${query}] - Command: [${command}] - DATA: [${args}]`);
                 const result = await this.httpRequest(query).catch((error: any) => {
-                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: ${error.message}`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: ${error.message}`);
                 });
                 if (!result) {
-                    throw new Error(`PAX REQUEST fail Query: [${this.host}/?${query}] Error: 'Result null!'`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: 'Result null!'`);
                 }
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
                 const paxReportResponse = this.parseReportResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.host}/?${query}] - RESPONSE: [${JSON.stringify(paxReportResponse)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(paxReportResponse)}]`);
                 return resolve(paxReportResponse);
             } catch (error: any) {
                 logger.error(error.message);
@@ -376,4 +376,3 @@ class Pax {
 }
 
 (window as any).Pax = Pax;
-export default Pax;

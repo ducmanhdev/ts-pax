@@ -19,13 +19,12 @@
 
 <script src="http://localhost:8080/bundle/index.js"></script>
 <script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
-
 <script>
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
 
     const pax = new Pax({
-        host: '192.168.1.145',
+        ip: '192.168.1.145',
         port: '10009',
     });
 

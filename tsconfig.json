@@ -1,25 +1,10 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "pretty": true,
-    "moduleResolution": "node",
-    "target": "es6",
-    "downlevelIteration": true,
+    "target": "es2016",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "sourceMap": false,
-    "noEmitOnError": false,
-    "experimentalDecorators": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": false,
-    "importHelpers": true,
-    "strictNullChecks": true,
-    "noImplicitAny": false,
-    "noImplicitThis": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
+    "declaration": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -31,20 +16,9 @@
       "es2020",
       "esnext.asynciterable"
     ],
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
-    "outDir": "./dist",
-    "baseUrl": ".",
-    "rootDir": "src"
-  },
-  "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx"
-  ],
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/test/*"
-  ]
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
+  }
 }
