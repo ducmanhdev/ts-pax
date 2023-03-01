@@ -1,6 +1,6 @@
 {
   "name": "demo-pax-ts",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -11,8 +11,8 @@
   "scripts": {
     "prepublishOnly": "pnpm run build",
     "clean": "rimraf ./dist ./bundle",
-    "build": "rimraf ./dist && pnpm run lint && tsup",
-    "bundle": "pnpm run clean && pnpm run lint && webpack",
+    "build": "pnpm run lint && tsup",
+    "bundle": "rimraf ./bundle && pnpm run lint && webpack",
     "lint": "eslint --max-warnings 0",
     "serve": "http-server"
   },

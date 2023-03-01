@@ -19,6 +19,7 @@
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
-  }
+    "outDir": "./bundle"
+  },
+  "include": ["src"]
 }

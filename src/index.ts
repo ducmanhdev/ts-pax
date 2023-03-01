@@ -149,6 +149,7 @@ export default class Pax {
 
     async httpRequest(query: string) {
         const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
+        console.log(baseUrl)
         const processUrl = "/?" + query;
 
         return axios({
@@ -175,17 +176,17 @@ export default class Pax {
                     args: args,
                     debug: debug
                 });
-                logger.info(`PAX REQUEST Query: [${this.ip}/?${query}] - Command: [${command}] - DATA: [${args}]`);
+                logger.info(`PAX REQUEST Query: [${this.ip}/${this.port}?${query}] - Command: [${command}] - DATA: [${args}]`);
 
                 const result = await this.httpRequest(query).catch((error: any) => {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: ${error.message}`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/${this.port}?${query}] Error: ${error.message}`);
                 });
                 if (!result) {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: 'Result null!'`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/${this.port}?${query}] Error: 'Result null!'`);
                 }
-                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/${this.port}?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
                 const paxResponse = this.parseResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/${this.port}?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
                 return resolve(paxResponse);
             } catch (error: any) {
                 logger.error(error.message);
@@ -199,16 +200,16 @@ export default class Pax {
         return new Promise(async resolve => {
             try {
                 const query = this.buildRequest({command: command, args: args, debug: debug});
-                logger.info(`PAX REQUEST Query: [${this.ip}/?${query}] - Command: [${command}] - DATA: [${args}]`);
+                logger.info(`PAX REQUEST Query: [${this.ip}/${this.port}?${query}] - Command: [${command}] - DATA: [${args}]`);
                 const result = await this.httpRequest(query).catch((error: any) => {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: ${error.message}`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/${this.port}?${query}] Error: ${error.message}`);
                 });
                 if (!result) {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/?${query}] Error: 'Result null!'`);
+                    throw new Error(`PAX REQUEST fail Query: [${this.ip}/${this.port}?${query}] Error: 'Result null!'`);
                 }
-                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/${this.port}?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
                 const paxReportResponse = this.parseReportResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.ip}/?${query}] - RESPONSE: [${JSON.stringify(paxReportResponse)}]`);
+                logger.success(`PAX REQUEST Query: [${this.ip}/${this.port}?${query}] - RESPONSE: [${JSON.stringify(paxReportResponse)}]`);
                 return resolve(paxReportResponse);
             } catch (error: any) {
                 logger.error(error.message);
