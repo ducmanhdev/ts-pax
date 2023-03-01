@@ -57,18 +57,12 @@
 
     async function doVoid() {
         const result = await pax.doVoid({
-            reference: "1",
             transaction: "1",
         })
     }
 
     async function doBatch() {
         const result = await pax.doBatchClose()
-    }
-
-    async function doCancel() {
-        let result = await pax.cancel();
-        console.log(result);
     }
 
     async function doReturn() {

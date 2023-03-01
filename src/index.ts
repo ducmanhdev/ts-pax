@@ -46,7 +46,7 @@ export type MakeCallReportRequest = {
 }
 
 export type DoVoidRequest = {
-    reference: string;
+    reference?: string;
     transaction: string;
 }
 
