@@ -20,6 +20,8 @@ import TraceInfo from "./models/request/track-info";
 import PaxResponse from "./models/response/pax-response";
 import AmountInfo from "./models/request/amount-info";
 
+export * from "./constants";
+
 export type PaxRequest = {
     ip: string;
     port: number;
