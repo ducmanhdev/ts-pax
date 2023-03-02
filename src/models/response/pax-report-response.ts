@@ -28,16 +28,16 @@ class PaxLocalDetailReport {
     edcType: string; //8
     paymentType: string; //9
     // unknown1: string; //10
-    amountInformationRaw: string; //11
-    amountInformation: AmountInformation; //11
-    accountInformationRaw: string; // 12
-    accountInformation: AccountInformation; //12
-    traceInformationRaw: string; //13
-    traceInformation: TraceInformation; //13
+    amountInformationRaw: string; //12
+    amountInformation: AmountInformation; //12
+    accountInformationRaw: string; // 13
+    accountInformation: AccountInformation; //13
+    traceInformationRaw: string; //14
+    traceInformation: TraceInformation; //14
     // unknown2: string; //14
     // unknown3: string; //15
     // unknown4: string; //16
-    additionalInformationRaw: string; //17
+    additionalInformationRaw: string; //18
 
     constructor({
                     totalRecord,
@@ -77,13 +77,13 @@ class PaxLocalDetailReport {
             hostInformation: HostInformation.fromString(data[7]!),
             edcType: data[8]!,
             paymentType: data[9]!,
-            amountInformationRaw: data[11]!,
-            amountInformation: AmountInformation.fromString(data[11]!),
-            accountInformationRaw: data[12]!,
-            accountInformation: AccountInformation.fromList(data[12]!),
-            traceInformationRaw: data[13]!,
-            traceInformation: TraceInformation.fromList(data[13]!),
-            additionalInformationRaw: data[17]!
+            amountInformationRaw: data[12]!,
+            amountInformation: AmountInformation.fromList(data[12]!),
+            accountInformationRaw: data[13]!,
+            accountInformation: AccountInformation.fromList(data[13]!),
+            traceInformationRaw: data[14]!,
+            traceInformation: TraceInformation.fromList(data[14]!),
+            additionalInformationRaw: data[18]!
         });
     }
 
