@@ -1,4 +1,4 @@
-export const PAX_CARD_TYPE = {
+export const CARD_TYPE = {
     ALL: "00",
     VISA: "01",
     MASTERCARD: "02",
@@ -20,7 +20,7 @@ export const REPORT_TRAN_TYPE = {
     SAFSUMMARYREPORT: "R06",
 }
 
-export const PAX_EDC_TYPE = {
+export const EDC_TYPE = {
     ALL: "00",
     CREDIT: "01",
     DEBIT: "02",
@@ -31,27 +31,27 @@ export const PAX_EDC_TYPE = {
     CASH: "07",
 }
 
-export const PAYMENT_TRANS_TYPE = {
-    TRAN_TYPE_MENU: '00',
-    TRAN_TYPE_SALE: '01',
-    TRAN_TYPE_RETURN: '02',
-    TRAN_TYPE_AUTH: '03',
-    TRAN_TYPE_POST_AUTH: '04',
-    TRAN_TYPE_FORCED: '05',
-    TRAN_TYPE_ADJUST: '06',
-    TRAN_TYPE_VOID: '16',
-    TRAN_TYPE_V_SALE: '17',
-    TRAN_TYPE_V_RETURN: '18',
-    TRAN_TYPE_V_AUTH: '19',
-    TRAN_TYPE_V_POST: '20',
-    TRAN_TYPE_V_FRCD: '21',
+export const TRANS_TYPE = {
+    MENU: '00',
+    SALE: '01',
+    RETURN: '02',
+    AUTH: '03',
+    POST_AUTH: '04',
+    FORCED: '05',
+    ADJUST: '06',
+    VOID: '16',
+    VOID_SALE: '17',
+    VOID_RETURN: '18',
+    VOID_AUTH: '19',
+    VOID_POST: '20',
+    VOID_FRCD: '21',
 }
 
 export const ENTRY_MODE = {
-    PAX_ENTRY_MODE_MANUAL: "0",
-    PAX_ENTRY_MODE_SWIPE: "1",
-    PAX_ENTRY_MODE_CONTACT_LESS: "2",
-    PAX_ENTRY_MODE_SCANNER: "3",
-    PAX_ENTRY_MODE_CHIP: "4",
-    PAX_ENTRY_MODE_CHIP_FALL_BACK_SWIPE: "5",
+    MANUAL: "00",
+    SWIPE: "01",
+    CONTACT_LESS: "02",
+    SCANNER: "03",
+    CHIP: "04",
+    CHIP_FALL_BACK_SWIPE: "05",
 }

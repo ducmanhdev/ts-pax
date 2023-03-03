@@ -10,9 +10,9 @@ import {
 } from "./utils";
 
 import {
-    PAX_CARD_TYPE,
-    PAX_EDC_TYPE,
-    PAYMENT_TRANS_TYPE,
+    CARD_TYPE,
+    EDC_TYPE,
+    TRANS_TYPE,
     REPORT_TRAN_TYPE
 } from "./constants";
 
@@ -222,7 +222,7 @@ export default class Pax {
 
     async doMenu(): Promise<boolean> {
         return new Promise(async resolve => {
-            const args = [PAYMENT_TRANS_TYPE.TRAN_TYPE_MENU, '', '', '1', '', '', '', '', ''];
+            const args = [TRANS_TYPE.MENU, '', '', '1', '', '', '', '', ''];
             const response = await this.makeCall({
                 command: "T00",
                 args: args
@@ -250,7 +250,7 @@ export default class Pax {
             invoiceNumber: orderID,
         });
         const args = [
-            PAYMENT_TRANS_TYPE.TRAN_TYPE_SALE,
+            TRANS_TYPE.SALE,
             amountRequest.toListData(),
             '',
             traceRequest.toListData(),
@@ -276,7 +276,7 @@ export default class Pax {
             referenceNumber: reference
         });
         const args = [
-            PAYMENT_TRANS_TYPE.TRAN_TYPE_ADJUST,
+            TRANS_TYPE.ADJUST,
             amountRequest.toListData(),
             '',
             traceRequest.toListData(),
@@ -299,7 +299,7 @@ export default class Pax {
         });
         const traceRequest = new TraceInfo({});
         const args = [
-            PAYMENT_TRANS_TYPE.TRAN_TYPE_RETURN,
+            TRANS_TYPE.RETURN,
             amountRequest.toListData(),
             '',
             traceRequest.toListData(),
@@ -322,7 +322,7 @@ export default class Pax {
             referenceNumber: reference
         });
         const args = [
-            PAYMENT_TRANS_TYPE.TRAN_TYPE_VOID,
+            TRANS_TYPE.VOID,
             '',
             '',
             traceRequest.toListData(),
@@ -347,8 +347,8 @@ export default class Pax {
     }
 
     async localDetailReport({
-                                edcType = PAX_EDC_TYPE.ALL,
-                                cardType = PAX_CARD_TYPE.ALL,
+                                edcType = EDC_TYPE.ALL,
+                                cardType = CARD_TYPE.ALL,
                                 ecrRefNum = '',
                                 refNum = ''
                             }: LocalDetailReportRequest = {}): Promise<PaxReportResponse | null> {
@@ -365,7 +365,7 @@ export default class Pax {
     }
 
     async localTotalReport({
-                               edcType = PAX_EDC_TYPE.ALL,
+                               edcType = EDC_TYPE.ALL,
                            }: LocalTotalReportRequest = {}): Promise<PaxReportResponse | null> {
         const reportRequest = new ReportRequest({
             edcType: edcType,
