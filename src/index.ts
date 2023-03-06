@@ -65,6 +65,7 @@ export type DoSalesRequest = {
 }
 
 export type DoReturnRequest = {
+    orderId?: string;
     amount: number;
 }
 
@@ -292,12 +293,14 @@ export default class Pax {
         });
     }
 
-    async doReturn({amount}: DoReturnRequest): Promise<PaxResponse | null> {
+    async doReturn({orderId, amount}: DoReturnRequest): Promise<PaxResponse | null> {
         logger.info(`PAX REQUEST : [do_return] - DATA: [amount: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
         });
-        const traceRequest = new TraceInfo({});
+        const traceRequest = new TraceInfo({
+            referenceNumber: orderId
+        });
         const args = [
             TRANS_TYPE.RETURN,
             amountRequest.toListData(),
