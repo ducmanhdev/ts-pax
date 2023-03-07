@@ -74,7 +74,7 @@ class PaxLocalDetailReport {
             totalRecord: data[6]!,
             recordNumber: data[7]!,
             hostInformationRaw: data[8]!,
-            hostInformation: HostInformation.fromString(data[8]!),
+            hostInformation: HostInformation.fromList(data[8]!),
             edcType: data[9]!,
             paymentType: data[10]!,
             amountInformationRaw: data[12]!,
