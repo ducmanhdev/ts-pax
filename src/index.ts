@@ -223,7 +223,7 @@ export default class Pax {
 
     async doMenu(): Promise<boolean> {
         return new Promise(async resolve => {
-            const args = [TRANS_TYPE.MENU, '', '', '1', '', '', '', '', ''];
+            const args = [TRANS_TYPE.UNKNOWN, '', '', '1', '', '', '', '', ''];
             const response = await this.makeCall({
                 command: "T00",
                 args: args

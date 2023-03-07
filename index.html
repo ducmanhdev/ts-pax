@@ -49,7 +49,7 @@
 
     async function doAdjust() {
         const result = await pax.doAdjust({
-            reference: "1",
+            reference: "95518",
             transaction: "1",
             amount: Math.floor(Math.random() * 5000)
         })
@@ -67,7 +67,8 @@
 
     async function doReturn() {
         const result = await pax.doReturn({
-            amount: 10
+            amount: 10,
+            orderId: 85518,
         });
     }
 </script>
