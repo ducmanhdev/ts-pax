@@ -21,22 +21,22 @@ type PaxLocalDetailReportParams = {
 }
 
 class PaxLocalDetailReport {
-    totalRecord: string; //5
-    recordNumber: string; //6
-    hostInformationRaw: string; //7
-    hostInformation: HostInformation; //7
-    edcType: string; //8
-    paymentType: string; //9
-    // unknown1: string; //10
+    totalRecord: string; //6
+    recordNumber: string; //7
+    hostInformationRaw: string; //8
+    hostInformation: HostInformation; //8
+    edcType: string; //9
+    paymentType: string; //10
+    // unknown1: string; //11
     amountInformationRaw: string; //12
     amountInformation: AmountInformation; //12
     accountInformationRaw: string; // 13
     accountInformation: AccountInformation; //13
     traceInformationRaw: string; //14
     traceInformation: TraceInformation; //14
-    // unknown2: string; //14
-    // unknown3: string; //15
-    // unknown4: string; //16
+    // unknown2: string; //15
+    // unknown3: string; //16
+    // unknown4: string; //17
     additionalInformationRaw: string; //18
 
     constructor({
@@ -71,12 +71,12 @@ class PaxLocalDetailReport {
 
     static fromList(data: any[]) {
         return new PaxLocalDetailReport({
-            totalRecord: data[5]!,
-            recordNumber: data[6]!,
-            hostInformationRaw: data[7]!,
-            hostInformation: HostInformation.fromString(data[7]!),
-            edcType: data[8]!,
-            paymentType: data[9]!,
+            totalRecord: data[6]!,
+            recordNumber: data[7]!,
+            hostInformationRaw: data[8]!,
+            hostInformation: HostInformation.fromString(data[8]!),
+            edcType: data[9]!,
+            paymentType: data[10]!,
             amountInformationRaw: data[12]!,
             amountInformation: AmountInformation.fromList(data[12]!),
             accountInformationRaw: data[13]!,
