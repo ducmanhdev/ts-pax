@@ -1,6 +1,6 @@
 {
   "name": "pax-ts",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
