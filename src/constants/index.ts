@@ -33,9 +33,9 @@ export const EDC_TYPE = {
 
 export const TRANS_TYPE = {
     MENU: '00',
-    SALE: '01',
-    RETURN: '02',
-    AUTH: '03',
+    AUTH: '01',
+    SALE: '02',
+    RETURN: '03',
     POST_AUTH: '04',
     FORCED: '05',
     ADJUST: '06',
