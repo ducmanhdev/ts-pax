@@ -35,15 +35,15 @@ export default class BatchCount {
         this.checkCount = checkCount;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new BatchCount({
-            creditCount: fields[0]!,
-            debitCount: fields[1]!,
-            ebtCount: fields[2]!,
-            giftCount: fields[3]!,
-            loyaltyCount: fields[4]!,
-            cashCount: fields[5]!,
-            checkCount: fields[6]!,
+            creditCount: fields[0],
+            debitCount: fields[1],
+            ebtCount: fields[2],
+            giftCount: fields[3],
+            loyaltyCount: fields[4],
+            cashCount: fields[5],
+            checkCount: fields[6],
         });
     }
 

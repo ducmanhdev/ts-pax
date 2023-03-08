@@ -4,7 +4,9 @@ import BatchAmount from "./batch-amount";
 type PaxBatchResponseParams = {
     messageRaw: string;
     batchCount: BatchCount;
+    batchCountRaw: any;
     batchAmount: BatchAmount;
+    batchAmountRaw: any;
     timestamp: string;
     tid: string;
     mid: string;
@@ -13,7 +15,9 @@ type PaxBatchResponseParams = {
 export default class PaxBatchResponse {
     messageRaw: string;
     batchCount: BatchCount;
+    batchCountRaw: [];
     batchAmount: BatchAmount;
+    batchAmountRaw: [];
     // Timestamp with format: YYYYMMDDhhmmss
     timestamp: string;
     tid: string;
@@ -22,27 +26,33 @@ export default class PaxBatchResponse {
     constructor({
                     messageRaw,
                     batchCount,
+                    batchCountRaw,
                     batchAmount,
+                    batchAmountRaw,
                     timestamp,
                     tid,
                     mid,
                 }: PaxBatchResponseParams) {
         this.messageRaw = messageRaw;
+        this.batchCountRaw = batchCountRaw
         this.batchCount = batchCount;
+        this.batchAmountRaw = batchAmountRaw;
         this.batchAmount = batchAmount;
         this.timestamp = timestamp;
         this.tid = tid;
         this.mid = mid;
     }
 
-    static fromList(data: any) {
+    static fromList(fields: any[]) {
         return new PaxBatchResponse({
-            messageRaw: data[5]!,
-            batchCount: BatchCount.fromList(data[6]!),
-            batchAmount: BatchAmount.fromList(data[7]!),
-            timestamp: data[8]!,
-            tid: data[9]!,
-            mid: data[10]!
+            messageRaw: fields[6],
+            batchCountRaw: fields[7],
+            batchCount: BatchCount.fromList(fields[7]),
+            batchAmountRaw: fields[8],
+            batchAmount: BatchAmount.fromList(fields[8]),
+            timestamp: fields[9],
+            tid: fields[10],
+            mid: fields[11]
         });
     }
 

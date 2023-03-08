@@ -35,15 +35,15 @@ export default class CommercialInformation {
         this.productDescription = productDescription;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new CommercialInformation({
-            poNumber: fields[0]!,
-            customerCode: fields[0]!,
-            taxExempt: fields[0]!,
-            taxExemptID: fields[0]!,
-            merchantTaxID: fields[0]!,
-            destinationZipCode: fields[0]!,
-            productDescription: fields[0]!,
+            poNumber: fields[0],
+            customerCode: fields[0],
+            taxExempt: fields[0],
+            taxExemptID: fields[0],
+            merchantTaxID: fields[0],
+            destinationZipCode: fields[0],
+            productDescription: fields[0],
         });
     }
 

@@ -64,16 +64,9 @@ export default class PaxResponse {
                 responseCode: responseCode,
                 responseMessage: responseMessage,
             });
-            if (
-                fields.length === 14 &&
-                command === PaxResponse.COMMAND_TYPE_PAYMENT
-            ) {
-                const dataAmount = fields[7]!.split(String.fromCharCode(31));
+            if (command === PaxResponse.COMMAND_TYPE_PAYMENT && fields.length >= 14) {
                 result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
-                result.amount = parseInt(dataAmount[0]!);
-            } else if (
-                fields.length === 12 &&
-                command === PaxResponse.COMMAND_TYPE_BATCH) {
+            } else if (command === PaxResponse.COMMAND_TYPE_BATCH && fields.length >= 11) {
                 result.paxBatchResponse = PaxBatchResponse.fromList(fields);
             }
             console.log({parseResponse: result});

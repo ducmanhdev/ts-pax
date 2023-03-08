@@ -51,19 +51,19 @@ export default class AccountInformation {
         this.cardPresentIndicator = cardPresentIndicator;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new AccountInformation({
-            account: fields[0]!,
-            entryMode: fields[1]!,
-            expiryDate: fields[2]!,
-            ebtType: fields[3]!,
-            voucherNumber: fields[4]!,
-            newAccountNo: fields[5]!,
-            cardType: fields[6]!,
-            cardHolder: fields[7]!,
-            cvdApprovalCode: fields[8]!,
-            cvdMessage: fields[9]!,
-            cardPresentIndicator: fields[10]!,
+            account: fields[0],
+            entryMode: fields[1],
+            expiryDate: fields[2],
+            ebtType: fields[3],
+            voucherNumber: fields[4],
+            newAccountNo: fields[5],
+            cardType: fields[6],
+            cardHolder: fields[7],
+            cvdApprovalCode: fields[8],
+            cvdMessage: fields[9],
+            cardPresentIndicator: fields[10],
         });
     }
 

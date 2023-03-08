@@ -37,13 +37,13 @@ export default class BatchAmount {
 
     static fromList(fields: string[]) {
         return new BatchAmount({
-            creditAmount: fields[0]!,
-            debitAmount: fields[1]!,
-            ebtAmount: fields[2]!,
-            giftAmount: fields[3]!,
-            loyaltyAmount: fields[4]!,
-            cashAmount: fields[5]!,
-            checkAmount: fields[6]!,
+            creditAmount: fields[0],
+            debitAmount: fields[1],
+            ebtAmount: fields[2],
+            giftAmount: fields[3],
+            loyaltyAmount: fields[4],
+            cashAmount: fields[5],
+            checkAmount: fields[6],
         });
     }
 

@@ -63,22 +63,22 @@ export default class AdditionalInformation {
         this.cvm = cvm;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new AdditionalInformation({
-            edcType: fields[0]!,
-            cardBin: fields[1]!,
-            programType: fields[2]!,
-            sn: fields[3]!,
-            tc: fields[4]!,
-            tvr: fields[5]!,
-            aid: fields[6]!,
-            tsi: fields[7]!,
-            atc: fields[8]!,
-            applab: fields[9]!,
-            iad: fields[10]!,
-            arc: fields[11]!,
-            cid: fields[12]!,
-            cvm: fields[13]!,
+            edcType: fields[0],
+            cardBin: fields[1],
+            programType: fields[2],
+            sn: fields[3],
+            tc: fields[4],
+            tvr: fields[5],
+            aid: fields[6],
+            tsi: fields[7],
+            atc: fields[8],
+            applab: fields[9],
+            iad: fields[10],
+            arc: fields[11],
+            cid: fields[12],
+            cvm: fields[13],
         });
     }
 

@@ -19,7 +19,7 @@ export default class TraceInformation {
         this.timeStamp = timeStamp;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new TraceInformation({
             transactionNumber: fields[0]!,
             referenceNumber: fields[1]!,

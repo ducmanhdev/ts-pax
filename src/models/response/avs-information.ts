@@ -15,10 +15,10 @@ export default class AvsInformation {
         this.avsMessage = avsMessage
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new AvsInformation({
-            avsApprovalCode: fields[0]!,
-            avsMessage: fields[1]!,
+            avsApprovalCode: fields[0],
+            avsMessage: fields[1],
         });
     }
 

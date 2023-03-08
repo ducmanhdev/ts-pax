@@ -31,14 +31,14 @@ export default class HostInformation {
         this.batchNumber = batchNumber;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new HostInformation({
-            hostResponseCode: fields[0]!,
-            hostResponseMessage: fields[1]!,
-            authCode: fields[2]!,
-            hostReferenceNumber: fields[3]!,
-            traceNumber: fields[4]!,
-            batchNumber: fields[5]!,
+            hostResponseCode: fields[0],
+            hostResponseMessage: fields[1],
+            authCode: fields[2],
+            hostReferenceNumber: fields[3],
+            traceNumber: fields[4],
+            batchNumber: fields[5],
         });
     }
 

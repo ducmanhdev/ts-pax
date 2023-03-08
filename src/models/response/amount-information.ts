@@ -39,16 +39,16 @@ export default class AmountInformation {
         this.balance2 = balance2;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new AmountInformation({
-            approveAmount: fields[0]!,
-            amountDue: fields[1]!,
-            tipAmount: fields[2]!,
-            cashBackAmount: fields[3]!,
-            merchantFee_surchargeFee: fields[4]!,
-            taxAmount: fields[5]!,
-            balance1: fields[6]!,
-            balance2: fields[7]!,
+            approveAmount: fields[0],
+            amountDue: fields[1],
+            tipAmount: fields[2],
+            cashBackAmount: fields[3],
+            merchantFee_surchargeFee: fields[4],
+            taxAmount: fields[5],
+            balance1: fields[6],
+            balance2: fields[7],
         });
     }
 
