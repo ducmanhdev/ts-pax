@@ -1,23 +1,26 @@
 import BatchCount from "./batch-count";
 import BatchAmount from "./batch-amount";
+import HostInformation from "./host-information";
 
 type PaxBatchResponseParams = {
+    message: HostInformation;
     messageRaw: string;
     batchCount: BatchCount;
-    batchCountRaw: any;
+    batchCountRaw: string[];
     batchAmount: BatchAmount;
-    batchAmountRaw: any;
+    batchAmountRaw: string[];
     timestamp: string;
     tid: string;
     mid: string;
 }
 
 export default class PaxBatchResponse {
+    message: HostInformation;
     messageRaw: string;
     batchCount: BatchCount;
-    batchCountRaw: [];
+    batchCountRaw: string[];
     batchAmount: BatchAmount;
-    batchAmountRaw: [];
+    batchAmountRaw: string[];
     // Timestamp with format: YYYYMMDDhhmmss
     timestamp: string;
     tid: string;
@@ -25,6 +28,7 @@ export default class PaxBatchResponse {
 
     constructor({
                     messageRaw,
+                    message,
                     batchCount,
                     batchCountRaw,
                     batchAmount,
@@ -34,6 +38,7 @@ export default class PaxBatchResponse {
                     mid,
                 }: PaxBatchResponseParams) {
         this.messageRaw = messageRaw;
+        this.message = message;
         this.batchCountRaw = batchCountRaw
         this.batchCount = batchCount;
         this.batchAmountRaw = batchAmountRaw;
@@ -46,10 +51,11 @@ export default class PaxBatchResponse {
     static fromList(fields: any[]) {
         return new PaxBatchResponse({
             messageRaw: fields[6],
+            message: HostInformation.fromList(fields[6]),
             batchCountRaw: fields[7],
-            batchCount: BatchCount.fromList(fields[7]),
+            batchCount: BatchCount.fromString(fields[7]),
             batchAmountRaw: fields[8],
-            batchAmount: BatchAmount.fromList(fields[8]),
+            batchAmount: BatchAmount.fromString(fields[8]),
             timestamp: fields[9],
             tid: fields[10],
             mid: fields[11]
@@ -59,8 +65,11 @@ export default class PaxBatchResponse {
     toJson() {
         return {
             'messageRaw': this.messageRaw,
+            'message': this.message,
             'batchCount': this.batchCount,
+            'batchCountRaw': this.batchCountRaw,
             'batchAmount': this.batchAmount,
+            'batchAmountRaw': this.batchAmountRaw,
             'timestamp': this.timestamp,
             'mid': this.mid,
             'tid': this.tid

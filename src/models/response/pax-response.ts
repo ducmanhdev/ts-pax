@@ -66,7 +66,7 @@ export default class PaxResponse {
             });
             if (command === PaxResponse.COMMAND_TYPE_PAYMENT && fields.length >= 14) {
                 result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_BATCH && fields.length >= 11) {
+            } else if (command === PaxResponse.COMMAND_TYPE_BATCH && fields.length >= 12) {
                 result.paxBatchResponse = PaxBatchResponse.fromList(fields);
             }
             console.log({parseResponse: result});
