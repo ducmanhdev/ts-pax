@@ -3,7 +3,9 @@ import logger from './utils/logger';
 
 import ReportRequest, {ReportRequestParams} from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
-
+import {
+    GapMiniAppSdk,
+} from "gap-miniapp-sdk";
 import {
     getLRC,
     stringToHex
@@ -25,6 +27,7 @@ export * from "./constants";
 export type PaxRequest = {
     ip: string;
     port: number;
+    miniApp: GapMiniAppSdk,
     timeout?: number;
 }
 
@@ -79,29 +82,37 @@ export default class Pax {
     ip: string | undefined;
     port: number | undefined;
     timeout: number | undefined;
+    miniApp: GapMiniAppSdk;
 
     constructor({
                     ip,
                     port,
-                    timeout = 120
+                    miniApp,
+                    timeout = 120,
                 }: PaxRequest) {
         if (Pax.instance) {
             Pax.instance.setConfig({
                 ip: ip,
                 port: port,
+                miniApp: miniApp,
                 timeout: timeout
             });
             return Pax.instance;
         }
+        if(!miniApp) {
+            throw new Error('Please pass miniApp!')
+        }
         this.ip = ip;
         this.port = port;
+        this.miniApp = miniApp;
         this.timeout = timeout;
         Pax.instance = this;
     }
 
-    setConfig({ip, port, timeout}: PaxRequest) {
+    setConfig({ip, port, miniApp, timeout}: PaxRequest) {
         this.ip = ip;
         this.port = port;
+        this.miniApp = miniApp;
         this.timeout = timeout;
     }
 
@@ -153,21 +164,30 @@ export default class Pax {
     async httpRequest(query: string) {
         const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
         const processUrl = "/?" + query;
-
-        return axios({
-            method: 'GET',
-            baseURL: baseUrl,
-            url: processUrl,
-            timeout: this.timeout! * 1000,
-        }).then((response: AxiosResponse) => {
-            if (response?.status < 200 || response?.status > 400 || !response?.data) {
-                throw new Error("Error while fetching data");
-            }
-            return response.data;
-        }).catch((error: any) => {
-            console.log({'httpRequestError': error});
-            throw new Error("Error while fetching data");
+        const url = baseUrl + processUrl;
+        const response: any = await this.miniApp.gapHttpRequest({
+            method: "GET",
+            url: url,
+            data: null,
+            timeout: this.timeout
         });
+        return response;
+        // const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
+        // const processUrl = "/?" + query;
+        // return axios({
+        //     method: 'GET',
+        //     baseURL: baseUrl,
+        //     url: processUrl,
+        //     timeout: this.timeout! * 1000,
+        // }).then((response: AxiosResponse) => {
+        //     if (response?.status < 200 || response?.status > 400 || !response?.data) {
+        //         throw new Error("Error while fetching data");
+        //     }
+        //     return response.data;
+        // }).catch((error: any) => {
+        //     console.log({'httpRequestError': error});
+        //     throw new Error("Error while fetching data");
+        // });
     }
 
     makeCall({command, args, debug = false}: MakeCallRequest): Promise<PaxResponse | null> {

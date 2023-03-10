@@ -1,6 +1,6 @@
 {
   "name": "pax-ts",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@types/node": "^18.14.0",
     "axios": "^1.3.3",
+    "gap-miniapp-sdk": "^1.0.44",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"
   },

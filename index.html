@@ -23,10 +23,11 @@
 <script>
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
-
+    console.log(gapMiniAppSdk)
     const pax = new Pax({
         ip: '192.168.1.145',
         port: '10009',
+        miniApp: gapMiniAppSdk,
     });
 
     async function doInitialize() {
