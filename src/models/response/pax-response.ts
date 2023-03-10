@@ -1,5 +1,6 @@
 import PaxBatchResponse from "./pax-batch-response";
 import PaxPaymentResponse from "./pax-payment-response";
+import PaxInfoResponse from "./pax-info-response";
 import {hexToString, stringToHex} from "../../utils";
 
 type PaxResponseParams = {
@@ -13,6 +14,7 @@ type PaxResponseParams = {
 export default class PaxResponse {
     static COMMAND_TYPE_PAYMENT = "T01";
     static COMMAND_TYPE_BATCH = "B01";
+    static COMMAND_TYPE_INIT = "A01";
 
     status: string;
     command: string;
@@ -22,6 +24,7 @@ export default class PaxResponse {
     amount: number | undefined;
     paxPaymentResponse: PaxPaymentResponse | undefined;
     paxBatchResponse: PaxBatchResponse | undefined;
+    paxInfoResponse: PaxInfoResponse | undefined;
 
     constructor({
                     status,
@@ -64,7 +67,9 @@ export default class PaxResponse {
                 responseCode: responseCode,
                 responseMessage: responseMessage,
             });
-            if (command === PaxResponse.COMMAND_TYPE_PAYMENT && fields.length >= 14) {
+            if (command === PaxResponse.COMMAND_TYPE_INIT && fields.length >= 7) {
+                result.paxInfoResponse = PaxInfoResponse.fromList(fields);
+            } else if (command === PaxResponse.COMMAND_TYPE_PAYMENT && fields.length >= 14) {
                 result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
             } else if (command === PaxResponse.COMMAND_TYPE_BATCH && fields.length >= 12) {
                 result.paxBatchResponse = PaxBatchResponse.fromList(fields);

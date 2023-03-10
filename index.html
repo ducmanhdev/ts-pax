@@ -8,6 +8,7 @@
     <title>Document</title>
 </head>
 <body>
+<button onclick="doInitialize()">INIT</button>
 <button onclick="doLocalDetailReport()">LOCAL DETAIL REPORT</button>
 <button onclick="doLocalTotalReport()">LOCAL TOTAL REPORT</button>
 <button onclick="doMenu()">MENU</button>
@@ -27,6 +28,10 @@
         ip: '192.168.1.145',
         port: '10009',
     });
+
+    async function doInitialize() {
+        const result = await pax.doInitialize();
+    }
 
     async function doLocalTotalReport() {
         const result = await pax.localTotalReport();

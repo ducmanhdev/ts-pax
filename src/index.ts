@@ -221,6 +221,13 @@ export default class Pax {
         })
     }
 
+    async doInitialize(): Promise<PaxResponse | null> {
+        return this.makeCall({
+            command: "A00",
+            args: []
+        });
+    }
+
     async doMenu(): Promise<boolean> {
         return new Promise(async resolve => {
             const args = [TRANS_TYPE.MENU, '', '', '1', '', '', '', '', ''];
