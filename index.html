@@ -18,10 +18,9 @@
 <button onclick="doBatch()">BATCH CLOSE</button>
 <button onclick="doReturn()">RETURN</button>
 
-<script src="http://192.168.1.6:8080/dist/index.global.js"></script>
+<script src="./dist/index.global.js"></script>
 <script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
 <script>
-    import Pax from 'http://192.168.1.6:8080/dist/index.mjs';
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
     const pax = new Pax({

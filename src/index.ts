@@ -388,3 +388,5 @@ export default class Pax {
         });
     }
 }
+
+(window as any).Pax = Pax;
