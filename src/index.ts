@@ -1,4 +1,3 @@
-import axios, {AxiosResponse} from "axios";
 import logger from './utils/logger';
 
 import ReportRequest, {ReportRequestParams} from "./models/request/report-request";
@@ -82,7 +81,7 @@ export default class Pax {
     ip: string | undefined;
     port: number | undefined;
     timeout: number | undefined;
-    miniApp: GapMiniAppSdk;
+    miniApp: GapMiniAppSdk | undefined;
 
     constructor({
                     ip,
@@ -90,6 +89,9 @@ export default class Pax {
                     miniApp,
                     timeout = 120,
                 }: PaxRequest) {
+        if (!miniApp) {
+            throw new Error('Please pass miniApp!')
+        }
         if (Pax.instance) {
             Pax.instance.setConfig({
                 ip: ip,
@@ -98,9 +100,6 @@ export default class Pax {
                 timeout: timeout
             });
             return Pax.instance;
-        }
-        if(!miniApp) {
-            throw new Error('Please pass miniApp!')
         }
         this.ip = ip;
         this.port = port;
@@ -165,29 +164,12 @@ export default class Pax {
         const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
         const processUrl = "/?" + query;
         const url = baseUrl + processUrl;
-        const response: any = await this.miniApp.gapHttpRequest({
+        return await this.miniApp!.gapHttpRequest({
             method: "GET",
             url: url,
             data: null,
             timeout: this.timeout
-        });
-        return response;
-        // const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
-        // const processUrl = "/?" + query;
-        // return axios({
-        //     method: 'GET',
-        //     baseURL: baseUrl,
-        //     url: processUrl,
-        //     timeout: this.timeout! * 1000,
-        // }).then((response: AxiosResponse) => {
-        //     if (response?.status < 200 || response?.status > 400 || !response?.data) {
-        //         throw new Error("Error while fetching data");
-        //     }
-        //     return response.data;
-        // }).catch((error: any) => {
-        //     console.log({'httpRequestError': error});
-        //     throw new Error("Error while fetching data");
-        // });
+        }) as string;
     }
 
     makeCall({command, args, debug = false}: MakeCallRequest): Promise<PaxResponse | null> {
@@ -406,5 +388,3 @@ export default class Pax {
         });
     }
 }
-
-(window as any).Pax = Pax;

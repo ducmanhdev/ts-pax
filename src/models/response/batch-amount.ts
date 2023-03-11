@@ -35,7 +35,7 @@ export default class BatchAmount {
         this.checkAmount = checkAmount;
     }
 
-    static fromList(fields: string[]) {
+    static fromList(fields: any[]) {
         return new BatchAmount({
             creditAmount: fields[0],
             debitAmount: fields[1],

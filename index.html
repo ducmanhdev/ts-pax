@@ -18,65 +18,63 @@
 <button onclick="doBatch()">BATCH CLOSE</button>
 <button onclick="doReturn()">RETURN</button>
 
-<script src="http://localhost:8080/bundle/index.js"></script>
+<script src="http://192.168.1.6:8080/dist/index.global.js"></script>
 <script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
 <script>
+    import Pax from 'http://192.168.1.6:8080/dist/index.mjs';
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
-    console.log(gapMiniAppSdk)
     const pax = new Pax({
         ip: '192.168.1.145',
         port: '10009',
         miniApp: gapMiniAppSdk,
     });
-
-    async function doInitialize() {
-        const result = await pax.doInitialize();
+    const doInitialize = async () => {
+        await pax.doInitialize();
+    }
+    const doLocalTotalReport = async () => {
+        await pax.localTotalReport();
     }
 
-    async function doLocalTotalReport() {
-        const result = await pax.localTotalReport();
-    }
+    const doLocalDetailReport = async () => {
+        await pax.localDetailReport();
+    };
 
-    async function doLocalDetailReport() {
-        const result = await pax.localDetailReport();
-    }
+    const doMenu = async () => {
+        await pax.doMenu();
+    };
 
-    async function doMenu() {
-        const result = await pax.doMenu();
-    }
-
-    async function doSale() {
-        const result = await pax.doSales({
+    const doSale = async () => {
+        await pax.doSales({
             amount: 500,
             tips: 0,
         });
-    }
+    };
 
-    async function doAdjust() {
-        const result = await pax.doAdjust({
+    const doAdjust = async () => {
+        await pax.doAdjust({
             reference: "95518",
             transaction: "1",
             amount: Math.floor(Math.random() * 5000)
         })
-    }
+    };
 
-    async function doVoid() {
-        const result = await pax.doVoid({
+    const doVoid = async () => {
+        await pax.doVoid({
             transaction: "3",
         })
-    }
+    };
 
-    async function doBatch() {
-        const result = await pax.doBatchClose()
-    }
+    const doBatch = async () => {
+        await pax.doBatchClose()
+    };
 
-    async function doReturn() {
-        const result = await pax.doReturn({
+    const doReturn = async () => {
+        await pax.doReturn({
             amount: 10,
             orderId: 85518,
         });
-    }
+    };
 </script>
 </body>
 </html>
