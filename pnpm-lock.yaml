@@ -1,7 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@types/node': ^18.15.0
   eslint: ^8.36.0
   gap-miniapp-sdk: ^1.0.44
   http-server: ^14.1.1
@@ -9,14 +8,13 @@ specifiers:
   typescript: ^4.9.5
 
 dependencies:
-  '@types/node': 18.15.0
   gap-miniapp-sdk: 1.0.44
-  typescript: 4.9.5
 
 devDependencies:
   eslint: 8.36.0
   http-server: 14.1.1
   tsup: 6.6.3_typescript@4.9.5
+  typescript: 4.9.5
 
 packages:
 
@@ -295,10 +293,6 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
     dev: true
-
-  /@types/node/18.15.0:
-    resolution: {integrity: sha512-z6nr0TTEOBGkzLGmbypWOGnpSpSIBorEhC4L+4HeQ2iezKCi4f77kyslRwvHeNitymGQ+oFyIWGP96l/DPSV9w==}
-    dev: false
 
   /acorn-jsx/5.3.2_acorn@8.8.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -1483,6 +1477,7 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
+    dev: true
 
   /union/0.5.0:
     resolution: {integrity: sha512-N6uOhuW6zO95P3Mel2I2zMsbsanvvtgn6jVqJv4vbVcz/JN0OkL9suomjQGmWtxJQXOCqUJvquc1sMeNz/IwlA==}

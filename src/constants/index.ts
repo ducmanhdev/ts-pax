@@ -1,5 +1,3 @@
-import * as constants from "constants";
-
 export const CARD_TYPE = {
     ALL: "00",
     VISA: "01",
@@ -48,50 +46,6 @@ export const TRANS_TYPE = {
     VOID_POST: '20',
     VOID_FRCD: '21',
 } as const
-
-// export const TRANS_TYPE = {
-//     UNKNOWN: '00',
-//     AUTH: '01',
-//     SALE: '02',
-//     RETURN: '03',
-//     VOID: '04',
-//     POST_AUTH: '05',
-//     FORCE_AUTH: '06',
-//     CAPTURE: '07',
-//     REPEAT_SALE: '08',
-//     CAPTURE_ALL: '09',
-//     ADJUST: '10',
-//     INQUIRY: '11',
-//     ACTIVATE: '12',
-//     DEACTIVATE: '13',
-//     RELOAD: '14',
-//     VOID_SALE: '15',
-//     VOID_RETURN: '16',
-//     VOID_AUTH: '17',
-//     VOID_POST_AUTH: '18',
-//     VOID_FORCE_AUTH: '19',
-//     VOID_WITHDRAWAL: '20',
-//     REVERSAL: '21',
-//     WITHDRAWAL: '22',
-//     ISSUE: '23',
-//     CASHOUT: '24',
-//     REPLACE: '25',
-//     MERGE: '26',
-//     REPORT_LOST: '27',
-//     REDEEM: '28',
-//     STATUS_CHECK: '29',
-//     SETUP: '30',
-//     INIT: '31',
-//     VERIFY: '32',
-//     REACTIVATE: '33',
-//     FORCEDISSUE: '34',
-//     FORCEDADD: '35',
-//     UNLOAD: '36',
-//     RENEW: '37',
-//     TOKENIZE: '38',
-//     GETC_ONVERT_DETAIL: '39',
-//     CONVERT: '40',
-// }
 
 export const ENTRY_MODE = {
     MANUAL: "00",
