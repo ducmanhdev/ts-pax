@@ -118,8 +118,6 @@ export default class Pax {
     buildRequest({
                      command,
                      args,
-                     // @ts-ignore
-                     debug = false,
                      encode = true
                  }: BuildRequestRequest) {
         const argsStr = args.map((arg: any) => {

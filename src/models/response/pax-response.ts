@@ -101,6 +101,3 @@ export default class PaxResponse {
         }
     }
 }
-
-class PaxResponseCode {
-}

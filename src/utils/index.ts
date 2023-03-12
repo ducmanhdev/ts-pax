@@ -29,7 +29,7 @@ export const stringToHex = (response: any) => {
 
 export const hexToString = (response: any) => {
     let responseHex = "";
-    let arr = response.split(" ");
+    const arr = response.split(" ");
     for (let i = 0; i < arr.length; i++) {
         if (arr[i] === "") continue;
         responseHex += String.fromCharCode(parseInt(arr[i], 16));
@@ -42,7 +42,7 @@ export const getLRC = (params: string) => {
     for (let i = 1; i < params.length; i++) {
         const type_of = typeof (params[i]);
         if (type_of == "string") {
-            let element = params[i]!.split("");
+            const element = params[i]!.split("");
             for (let ii = 0; ii < element.length; ii++) {
                 lrc ^= element[ii]!.charCodeAt(0);
             }

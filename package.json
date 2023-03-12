@@ -1,6 +1,6 @@
 {
   "name": "pax-ts",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -11,7 +11,8 @@
   "scripts": {
     "prepublishOnly": "pnpm run build --env.NODE_ENV production",
     "build": "pnpm run lint && tsup",
-    "lint": "eslint --max-warnings 0",
+    "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
+    "lint-fix": "eslint --fix",
     "serve": "http-server"
   },
   "keywords": [],
@@ -21,6 +22,8 @@
     "gap-miniapp-sdk": "^1.0.44"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
     "eslint": "^8.36.0",
     "http-server": "^14.1.1",
     "tsup": "^6.6.3",
