@@ -71,7 +71,7 @@ export type DoReturnRequest = {
     amount: number;
 }
 
-type LocalDetailReportRequest = Pick<ReportRequestParams, "edcType" | "cardType" | "ecrRefNum" | "refNum">;
+type LocalDetailReportRequest = ReportRequestParams;
 
 type LocalTotalReportRequest = Pick<ReportRequestParams, "edcType" | "cardType">;
 
@@ -359,12 +359,14 @@ export default class Pax {
     async localDetailReport({
                                 edcType = EDC_TYPE.ALL,
                                 cardType = CARD_TYPE.ALL,
+                                recordNum = '',
                                 ecrRefNum = '',
-                                refNum = ''
+                                refNum = '',
                             }: LocalDetailReportRequest = {}): Promise<PaxReportResponse | null> {
         const reportRequest = new ReportRequest({
             edcType: edcType,
             cardType: cardType,
+            recordNum: recordNum,
             ecrRefNum: ecrRefNum,
             refNum: refNum,
         });
