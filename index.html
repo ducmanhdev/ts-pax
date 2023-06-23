@@ -6,25 +6,40 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        .wrap {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        button {
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-<button onclick="doInitialize()">INIT</button>
-<button onclick="doLocalDetailReport()">LOCAL DETAIL REPORT</button>
-<button onclick="doLocalTotalReport()">LOCAL TOTAL REPORT</button>
-<button onclick="doMenu()">MENU</button>
-<button onclick="doSale()">SALE</button>
-<button onclick="doAdjust()">ADJUST</button>
-<button onclick="doVoid()">VOID</button>
-<button onclick="doBatch()">BATCH CLOSE</button>
-<button onclick="doReturn()">RETURN</button>
-
+<div class="wrap">
+    <button onclick="doInitialize()">INIT</button>
+    <button onclick="doLocalDetailReport()">LOCAL DETAIL REPORT</button>
+    <button onclick="doLocalTotalReport()">LOCAL TOTAL REPORT</button>
+    <button onclick="doMenu()">MENU</button>
+    <button onclick="doSale()">SALE</button>
+    <button onclick="doAdjust()">ADJUST</button>
+    <button onclick="doVoid()">VOID</button>
+    <button onclick="doBatch()">BATCH CLOSE</button>
+    <button onclick="doReturn()">RETURN</button>
+    <button onclick="showDialog()">SHOW DIALOG</button>
+    <button onclick="showTextBox()">SHOW TEXT BOX</button>
+</div>
 <script src="./dist/index.global.js"></script>
 <script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
 <script>
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
     const pax = new Pax({
-        ip: '192.168.1.145',
+        ip: '192.168.1.100',
         port: '10009',
         miniApp: gapMiniAppSdk,
     });
@@ -74,6 +89,24 @@
             orderId: 85518,
         });
     };
+
+    const showDialog = async () => {
+        const res = await pax.showDialog({
+            title: 'test show dialog',
+            button1: '10',
+            button2: '20',
+            button3: '30',
+        });
+        alert(JSON.stringify(res, null, 2))
+    }
+    const showTextBox = async () => {
+        const res = await pax.showTextBox({
+            title: 'test show dialog',
+            text: 'test ne',
+            signatureBox: 1,
+        });
+        alert(JSON.stringify(res, null, 2))
+    }
 </script>
 </body>
 </html>

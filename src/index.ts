@@ -1,5 +1,4 @@
 import logger from './utils/logger';
-
 import ReportRequest, {ReportRequestParams} from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
 import {
@@ -9,13 +8,13 @@ import {
     getLRC,
     stringToHex
 } from "./utils";
-
 import {
     CARD_TYPE,
     EDC_TYPE,
     TRANS_TYPE,
-    REPORT_TRAN_TYPE
+    REPORT_TRAN_TYPE,
 } from "./constants";
+import {ContinuousScreen, HardKeys, EnableHardKey, SignatureBox, TimeOut} from "./types";
 
 import TraceInfo from "./models/request/track-info";
 import PaxResponse from "./models/response/pax-response";
@@ -71,9 +70,39 @@ export type DoReturnRequest = {
     amount: number;
 }
 
-type LocalDetailReportRequest = ReportRequestParams;
+export type LocalDetailReportRequest = ReportRequestParams;
 
-type LocalTotalReportRequest = Pick<ReportRequestParams, "edcType" | "cardType">;
+export type LocalTotalReportRequest = Pick<ReportRequestParams, "edcType" | "cardType">;
+
+export type ShowDialogRequest = Partial<{
+    title: string,
+    button1: string,
+    button2: string,
+    button3: string,
+    button4: string,
+    timeout: TimeOut,
+    continuousScreen: ContinuousScreen,
+}>
+
+export type ShowTextBoxRequest = Partial<{
+    title: string,
+    text: string,
+    button1: string,
+    buttonColor1: string,
+    button2: string,
+    buttonColor2: string,
+    button3: string,
+    buttonColor3: string,
+    buttonKey1: HardKeys
+    buttonKey2: HardKeys
+    buttonKey3: HardKeys
+    enableHardKey: EnableHardKey,
+    hardKeyList: string,
+    signatureBox: SignatureBox,
+    saveSigPath: string,
+    timeout: TimeOut,
+    continuousScreen: ContinuousScreen,
+}>
 
 export default class Pax {
     static PROTO_VERSION = "1.28";
@@ -138,7 +167,7 @@ export default class Pax {
         return btoa(cmd);
     }
 
-    parseResponse(response: string): PaxResponse | null {
+    parseResponse(response: string) {
         const checkParams = stringToHex(response).split(" ").pop();
         const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
         const lrcFromResponse = getLRC(checkParams!);
@@ -148,7 +177,7 @@ export default class Pax {
         return PaxResponse.fromString(response);
     }
 
-    parseReportResponse(response: string): PaxReportResponse | null {
+    parseReportResponse(response: string) {
         const checkParams = stringToHex(response).split(" ").pop();
         const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
         const lrcFromResponse = getLRC(checkParams!);
@@ -221,7 +250,7 @@ export default class Pax {
         })
     }
 
-    async doInitialize(): Promise<PaxResponse | null> {
+    async doInitialize() {
         return this.makeCall({
             command: "A00",
             args: []
@@ -247,7 +276,7 @@ export default class Pax {
         })
     }
 
-    async doSales({orderID, amount, tips}: DoSalesRequest): Promise<PaxResponse | null> {
+    async doSales({orderID, amount, tips}: DoSalesRequest) {
         logger.info(`PAX REQUEST : [do_sales] - Order_ID: [${orderID}] - DATA: [Amount: ${amount} - tips: ${tips}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
@@ -274,7 +303,7 @@ export default class Pax {
         });
     }
 
-    async doAdjust({reference, transaction, amount}: DoAdjustRequest): Promise<PaxResponse | null> {
+    async doAdjust({reference, transaction, amount}: DoAdjustRequest) {
         logger.info(`PAX REQUEST : [do_adjust] - Order_ID: [${reference}] - DATA: [tran_id: ${transaction} - tips: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: Math.round(amount * 100).toString()
@@ -300,7 +329,7 @@ export default class Pax {
         });
     }
 
-    async doReturn({orderId, amount}: DoReturnRequest): Promise<PaxResponse | null> {
+    async doReturn({orderId, amount}: DoReturnRequest) {
         logger.info(`PAX REQUEST : [do_return] - DATA: [amount: ${amount}]`);
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
@@ -325,7 +354,7 @@ export default class Pax {
         });
     }
 
-    async doVoid({reference, transaction}: DoVoidRequest): Promise<PaxResponse | null> {
+    async doVoid({reference, transaction}: DoVoidRequest) {
         logger.info(`PAX REQUEST : [do_void] - Order_id: ${reference} DATA: [Tran_id: ${transaction}]`);
         const traceRequest = new TraceInfo({
             transactionNumber: transaction,
@@ -349,7 +378,7 @@ export default class Pax {
         });
     }
 
-    async doBatchClose(): Promise<PaxResponse | null> {
+    async doBatchClose() {
         return this.makeCall({
             command: 'B00',
             args: [],
@@ -362,7 +391,7 @@ export default class Pax {
                                 recordNum = '',
                                 ecrRefNum = '',
                                 refNum = '',
-                            }: LocalDetailReportRequest = {}): Promise<PaxReportResponse | null> {
+                            }: LocalDetailReportRequest = {}) {
         const reportRequest = new ReportRequest({
             edcType: edcType,
             cardType: cardType,
@@ -378,13 +407,83 @@ export default class Pax {
 
     async localTotalReport({
                                edcType = EDC_TYPE.ALL,
-                           }: LocalTotalReportRequest = {}): Promise<PaxReportResponse | null> {
+                           }: LocalTotalReportRequest = {}) {
         const reportRequest = new ReportRequest({
             edcType: edcType,
         });
         return this.makeCallReport({
             command: REPORT_TRAN_TYPE.LOCALTOTALREPORT,
             args: reportRequest.toListData()
+        });
+    }
+
+    async showDialog({
+                         title,
+                         button1,
+                         button2,
+                         button3,
+                         button4,
+                         timeout = this.timeout,
+                         continuousScreen = 0
+                     }: ShowDialogRequest) {
+        const args = [
+            title,
+            button1,
+            button2,
+            button3,
+            button4,
+            timeout,
+            continuousScreen,
+        ];
+
+        return this.makeCall({
+            command: "A06",
+            args: args
+        });
+    }
+
+    async showTextBox({
+                          title,
+                          text,
+                          button1,
+                          buttonColor1,
+                          button2,
+                          buttonColor2,
+                          button3,
+                          buttonColor3,
+                          buttonKey1,
+                          buttonKey2,
+                          buttonKey3,
+                          enableHardKey,
+                          hardKeyList,
+                          signatureBox = 1,
+                          saveSigPath,
+                          timeout = this.timeout,
+                          continuousScreen = 0,
+                      }: ShowTextBoxRequest) {
+        const args = [
+            title,
+            text,
+            button1,
+            buttonColor1,
+            button2,
+            buttonColor2,
+            button3,
+            buttonColor3,
+            timeout,
+            buttonKey1,
+            buttonKey2,
+            buttonKey3,
+            enableHardKey,
+            hardKeyList,
+            signatureBox,
+            continuousScreen,
+            saveSigPath,
+        ];
+
+        return this.makeCall({
+            command: "A56",
+            args: args
         });
     }
 }
