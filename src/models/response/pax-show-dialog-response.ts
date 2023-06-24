@@ -3,7 +3,7 @@ type PaxShowDialogResponseParams = {
 }
 
 export default class PaxShowDialogResponse {
-    selectedButtonNum: number;
+    selectedButtonNum;
     constructor({ selectedButtonNum }: PaxShowDialogResponseParams) {
         this.selectedButtonNum = selectedButtonNum;
     }

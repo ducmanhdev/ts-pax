@@ -20,19 +20,19 @@ type PaxPaymentResponseParams = {
 }
 
 export default class PaxPaymentResponse {
-    hostInformationRaw: string;
-    hostInformation: HostInformation;
-    transactionType: string;
-    amountInformationRaw: string;
-    accountInformationRaw: string;
-    amountInformation: AmountInformation;
-    accountInformation: AccountInformation;
-    traceInformationRaw: string;
-    traceInformation: TraceInformation;
-    aVSinformationRaw: string;
-    commercialInformationRaw: string;
-    motoEcommerceRaw: string;
-    additionalInformationRaw: string;
+    hostInformationRaw;
+    hostInformation;
+    transactionType;
+    amountInformationRaw;
+    accountInformationRaw;
+    amountInformation;
+    accountInformation;
+    traceInformationRaw;
+    traceInformation;
+    aVSinformationRaw;
+    commercialInformationRaw;
+    motoEcommerceRaw;
+    additionalInformationRaw;
 
     constructor({
                     hostInformationRaw,

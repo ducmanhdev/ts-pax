@@ -20,11 +20,12 @@ export default class PaxResponse {
     static COMMAND_TYPE_SHOW_DIALOG = "A07";
     static COMMAND_TYPE_SHOW_TEXT_BOX = "A57";
 
-    status: string;
-    command: string;
-    version: string;
-    responseCode: string;
-    responseMessage: string;
+    status;
+    command;
+    version;
+    responseCode;
+    responseMessage;
+
     amount: number | undefined;
     paxPaymentResponse: PaxPaymentResponse | undefined;
     paxBatchResponse: PaxBatchResponse | undefined;

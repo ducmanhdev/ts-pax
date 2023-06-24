@@ -9,13 +9,13 @@ type BatchAmountParams = {
 }
 
 export default class BatchAmount {
-    creditAmount: string;
-    debitAmount: string;
-    ebtAmount: string;
-    giftAmount: string;
-    loyaltyAmount: string;
-    cashAmount: string;
-    checkAmount: string;
+    creditAmount;
+    debitAmount;
+    ebtAmount;
+    giftAmount;
+    loyaltyAmount;
+    cashAmount;
+    checkAmount;
 
     constructor({
                     creditAmount,

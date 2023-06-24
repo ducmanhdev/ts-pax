@@ -4,8 +4,8 @@ type AvsInformationParams = {
 }
 
 export default class AvsInformation {
-    avsApprovalCode: string;
-    avsMessage: string;
+    avsApprovalCode;
+    avsMessage;
 
     constructor({
                     avsApprovalCode,

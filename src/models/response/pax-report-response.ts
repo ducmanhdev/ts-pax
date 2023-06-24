@@ -21,23 +21,23 @@ type PaxLocalDetailReportParams = {
 }
 
 class PaxLocalDetailReport {
-    totalRecord: string; //6
-    recordNumber: string; //7
-    hostInformationRaw: string; //8
-    hostInformation: HostInformation; //8
-    edcType: string; //9
-    paymentType: string; //10
-    // unknown1: string; //11
-    amountInformationRaw: string; //12
-    amountInformation: AmountInformation; //12
-    accountInformationRaw: string; // 13
-    accountInformation: AccountInformation; //13
-    traceInformationRaw: string; //14
-    traceInformation: TraceInformation; //14
-    // unknown2: string; //15
-    // unknown3: string; //16
-    // unknown4: string; //17
-    additionalInformationRaw: string; //18
+    totalRecord; //6
+    recordNumber; //7
+    hostInformationRaw; //8
+    hostInformation; //8
+    edcType; //9
+    paymentType; //10
+    // unknown1; //11
+    amountInformationRaw; //12
+    amountInformation; //12
+    accountInformationRaw; // 13
+    accountInformation; //13
+    traceInformationRaw; //14
+    traceInformation; //14
+    // unknown2; //15
+    // unknown3; //16
+    // unknown4; //17
+    additionalInformationRaw; //18
 
     constructor({
                     totalRecord,
@@ -174,70 +174,70 @@ type PaxLocalTotalReportParams = {
 }
 
 class PaxLocalTotalReport {
-    creditSaleCount: string;
-    creditSaleAmount: string;
-    creditForcedCount: string;
-    creditForcedAmount: string;
-    creditReturnCount: string;
-    creditReturnAmount: string;
-    creditAuthCount: string;
-    creditAuthAmount: string;
-    creditPostAuthCount: string;
-    creditPostAuthAmount: string;
-    debitSaleCount: string;
-    debitSaleAmount: string;
-    debitReturnCount: string;
-    debitReturnAmount: string;
-    eBTSaleCount: string;
-    eBTSaleAmount: string;
-    eBTReturnCount: string;
-    eBTReturnAmount: string;
-    eBTWithdrawalCount: string;
-    eBTWithdrawalAmount: string;
-    giftSaleCount: string;
-    giftSaleAmount: string;
-    giftAuthCount: string;
-    giftAuthAmount: string;
-    giftPostAuthCount: string;
-    giftPostAuthAmount: string;
-    giftActivateCount: string;
-    giftActivateAmount: string;
-    giftIssueCount: string;
-    giftIssueAmount: string;
-    giftReloadCount: string;
-    giftReloadAmount: string;
-    giftReturnCount: string;
-    giftReturnAmount: string;
-    giftForcedCount: string;
-    giftForcedAmount: string;
-    giftCashoutCount: string;
-    giftCashoutAmount: string;
-    giftDeactivateCount: string;
-    giftDeactivateAmount: string;
-    giftAdjustCount: string;
-    giftAdjustAmount: string;
-    loyaltyRedeemCount: string;
-    loyaltyRedeemAmount: string;
-    loyaltyIssueCount: string;
-    loyaltyIssueAmount: string;
-    loyaltyReloadCount: string;
-    loyaltyReloadAmount: string;
-    loyaltyReturnCount: string;
-    loyaltyReturnAmount: string;
-    loyaltyForcedCount: string;
-    loyaltyForcedAmount: string;
-    loyaltyActivateCount: string;
-    loyaltyActivateAmount: string;
-    loyaltyDeactivateCount: string;
-    loyaltyDeactivateAmount: string;
-    cashSaleCount: string;
-    cashSaleAmount: string;
-    cashReturnCount: string;
-    cashReturnAmount: string;
-    checkSaleCount: string;
-    checkSaleAmount: string;
-    checkAdjustCount: string;
-    checkAdjustAmount: string;
+    creditSaleCount;
+    creditSaleAmount;
+    creditForcedCount;
+    creditForcedAmount;
+    creditReturnCount;
+    creditReturnAmount;
+    creditAuthCount;
+    creditAuthAmount;
+    creditPostAuthCount;
+    creditPostAuthAmount;
+    debitSaleCount;
+    debitSaleAmount;
+    debitReturnCount;
+    debitReturnAmount;
+    eBTSaleCount;
+    eBTSaleAmount;
+    eBTReturnCount;
+    eBTReturnAmount;
+    eBTWithdrawalCount;
+    eBTWithdrawalAmount;
+    giftSaleCount;
+    giftSaleAmount;
+    giftAuthCount;
+    giftAuthAmount;
+    giftPostAuthCount;
+    giftPostAuthAmount;
+    giftActivateCount;
+    giftActivateAmount;
+    giftIssueCount;
+    giftIssueAmount;
+    giftReloadCount;
+    giftReloadAmount;
+    giftReturnCount;
+    giftReturnAmount;
+    giftForcedCount;
+    giftForcedAmount;
+    giftCashoutCount;
+    giftCashoutAmount;
+    giftDeactivateCount;
+    giftDeactivateAmount;
+    giftAdjustCount;
+    giftAdjustAmount;
+    loyaltyRedeemCount;
+    loyaltyRedeemAmount;
+    loyaltyIssueCount;
+    loyaltyIssueAmount;
+    loyaltyReloadCount;
+    loyaltyReloadAmount;
+    loyaltyReturnCount;
+    loyaltyReturnAmount;
+    loyaltyForcedCount;
+    loyaltyForcedAmount;
+    loyaltyActivateCount;
+    loyaltyActivateAmount;
+    loyaltyDeactivateCount;
+    loyaltyDeactivateAmount;
+    cashSaleCount;
+    cashSaleAmount;
+    cashReturnCount;
+    cashReturnAmount;
+    checkSaleCount;
+    checkSaleAmount;
+    checkAdjustCount;
+    checkAdjustAmount;
 
     constructor({
                     creditSaleCount,
@@ -522,11 +522,11 @@ export default class PaxReportResponse {
     static COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE = "R03";
     static COMMAND_TYPE_REPORT_LOCAL_TOTAL_RESPONSE = "R01";
 
-    status: string;
-    command: string;
-    version: string;
-    responseCode: string;
-    responseMessage: string;
+    status;
+    command;
+    version;
+    responseCode;
+    responseMessage;
     paxLocalTotalReport: PaxLocalTotalReport | undefined;
     paxLocalDetailReport: PaxLocalDetailReport | undefined;
 

@@ -9,13 +9,13 @@ type BatchCountParams = {
 }
 
 export default class BatchCount {
-    creditCount: string;
-    debitCount: string;
-    ebtCount: string;
-    giftCount: string;
-    loyaltyCount: string;
-    cashCount: string;
-    checkCount: string;
+    creditCount;
+    debitCount;
+    ebtCount;
+    giftCount;
+    loyaltyCount;
+    cashCount;
+    checkCount;
 
     constructor({
                     creditCount,

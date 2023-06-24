@@ -9,13 +9,13 @@ type CommercialInformationParams = {
 }
 
 export default class CommercialInformation {
-    poNumber: string;
-    customerCode: string;
-    taxExempt: string;
-    taxExemptID: string;
-    merchantTaxID: string;
-    destinationZipCode: string;
-    productDescription: string;
+    poNumber;
+    customerCode;
+    taxExempt;
+    taxExemptID;
+    merchantTaxID;
+    destinationZipCode;
+    productDescription;
 
     constructor({
                     poNumber,

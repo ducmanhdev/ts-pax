@@ -10,14 +10,14 @@ type AmountInformationParams = {
 }
 
 export default class AmountInformation {
-    approveAmount: string;
-    amountDue: string;
-    tipAmount: string;
-    cashBackAmount: string;
-    merchantFee_surchargeFee: string;
-    taxAmount: string;
-    balance1: string;
-    balance2: string;
+    approveAmount;
+    amountDue;
+    tipAmount;
+    cashBackAmount;
+    merchantFee_surchargeFee;
+    taxAmount;
+    balance1;
+    balance2;
 
     constructor({
                     approveAmount,

@@ -1,14 +1,4 @@
-export type ReportRequestParams = {
-    edcType?: string;
-    cardType?: string;
-    paymentType?: string;
-    recordNum?: string;
-    refNum?: string;
-    authCode?: string;
-    ecrRefNum?: string;
-}
-
-export default class ReportRequest {
+export type ReportRequestParams = Partial<{
     edcType: string;
     cardType: string;
     paymentType: string;
@@ -16,6 +6,16 @@ export default class ReportRequest {
     refNum: string;
     authCode: string;
     ecrRefNum: string;
+}>
+
+export default class ReportRequest {
+    edcType;
+    cardType;
+    paymentType;
+    recordNum;
+    refNum;
+    authCode;
+    ecrRefNum;
 
     constructor({
                     edcType = '',

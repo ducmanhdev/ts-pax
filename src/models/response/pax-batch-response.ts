@@ -15,16 +15,16 @@ type PaxBatchResponseParams = {
 }
 
 export default class PaxBatchResponse {
-    message: HostInformation;
-    messageRaw: string;
-    batchCount: BatchCount;
-    batchCountRaw: string[];
-    batchAmount: BatchAmount;
-    batchAmountRaw: string[];
+    message;
+    messageRaw;
+    batchCount;
+    batchCountRaw;
+    batchAmount;
+    batchAmountRaw;
     // Timestamp with format: YYYYMMDDhhmmss
-    timestamp: string;
-    tid: string;
-    mid: string;
+    timestamp;
+    tid;
+    mid;
 
     constructor({
                     messageRaw,

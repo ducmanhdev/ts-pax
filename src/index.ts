@@ -1,143 +1,51 @@
-import logger from './utils/logger';
-import ReportRequest, {ReportRequestParams} from "./models/request/report-request";
+import {isIP} from 'is-ip';
+
+import ReportRequest from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
-import {
-    GapMiniAppSdk,
-} from "gap-miniapp-sdk";
-import {
-    getLRC,
-    stringToHex
-} from "./utils";
-import {
-    CARD_TYPE,
-    EDC_TYPE,
-    TRANS_TYPE,
-    REPORT_TRAN_TYPE,
-} from "./constants";
-import {ContinuousScreen, HardKeys, EnableHardKey, SignatureBox, TimeOut} from "./types";
+import {GapMiniAppSdk} from "gap-miniapp-sdk";
+import {getLRC, parseJSON, stringToHex} from "./utils";
+import {REPORT_TRAN_TYPE, TRANS_TYPE} from "./constants";
 
 import TraceInfo from "./models/request/track-info";
 import PaxResponse from "./models/response/pax-response";
 import AmountInfo from "./models/request/amount-info";
+import ShowDialogRequest, {ShowDialogRequestParams} from "./models/request/show-dialog-request";
+import ShowTextBoxRequest, {ShowTextBoxRequestParams} from "./models/request/show-text-box-request";
+import {
+    BuildRequestRequestParams,
+    DoAdjustRequestParams,
+    DoReturnRequestParams,
+    DoSalesRequestParams,
+    DoVoidRequestParams, HTTPRequestResponse,
+    LocalDetailReportRequestParams,
+    LocalTotalReportRequestParams,
+    MakeCallReportRequestParams,
+    MakeCallRequestParams,
+    PaxRequestParams
+} from "./types";
 
 export * from "./constants";
-
-export type PaxRequest = {
-    ip: string;
-    port: number;
-    miniApp: GapMiniAppSdk,
-    timeout?: number;
-}
-
-export type MakeCallRequest = {
-    command: string;
-    args: any[];
-    debug?: boolean;
-}
-
-export type BuildRequestRequest = {
-    command: string;
-    args: any[];
-    debug?: boolean;
-    encode?: boolean;
-}
-
-export type MakeCallReportRequest = {
-    command: string;
-    args: any[];
-    debug?: boolean;
-}
-
-export type DoVoidRequest = {
-    reference?: string;
-    transaction: string;
-}
-
-export type DoAdjustRequest = {
-    reference: string;
-    transaction: string;
-    amount: number;
-}
-
-export type DoSalesRequest = {
-    orderID?: string;
-    amount: number;
-    tips: number;
-}
-
-export type DoReturnRequest = {
-    orderId?: string;
-    amount: number;
-}
-
-export type LocalDetailReportRequest = ReportRequestParams;
-
-export type LocalTotalReportRequest = Pick<ReportRequestParams, "edcType" | "cardType">;
-
-export type ShowDialogRequest = Partial<{
-    title: string,
-    button1: string,
-    button2: string,
-    button3: string,
-    button4: string,
-    timeout: TimeOut,
-    continuousScreen: ContinuousScreen,
-}>
-
-export type ShowTextBoxRequest = Partial<{
-    title: string,
-    text: string,
-    button1: string,
-    buttonColor1: string,
-    button2: string,
-    buttonColor2: string,
-    button3: string,
-    buttonColor3: string,
-    buttonKey1: HardKeys
-    buttonKey2: HardKeys
-    buttonKey3: HardKeys
-    enableHardKey: EnableHardKey,
-    hardKeyList: string,
-    signatureBox: SignatureBox,
-    saveSigPath: string,
-    timeout: TimeOut,
-    continuousScreen: ContinuousScreen,
-}>
 
 export default class Pax {
     static PROTO_VERSION = "1.28";
     static instance: Pax;
-    ip: string | undefined;
-    port: number | undefined;
-    timeout: number | undefined;
-    miniApp: GapMiniAppSdk | undefined;
+    ip!: string;
+    port!: number;
+    timeout!: number;
+    miniApp!: GapMiniAppSdk;
 
-    constructor({
-                    ip,
-                    port,
-                    miniApp,
-                    timeout = 120,
-                }: PaxRequest) {
-        if (!miniApp) {
-            throw new Error('Please pass miniApp!')
-        }
+    constructor(config: PaxRequestParams) {
+        if (!isIP(config.ip)) throw new Error('Missing ip or ip is invalid!');
+        if (!config.miniApp) throw new Error('Missing miniApp!');
         if (Pax.instance) {
-            Pax.instance.setConfig({
-                ip: ip,
-                port: port,
-                miniApp: miniApp,
-                timeout: timeout
-            });
+            Pax.instance.setConfig(config);
             return Pax.instance;
         }
-        this.ip = ip;
-        this.port = port;
-        this.miniApp = miniApp;
-        this.timeout = timeout;
         Pax.instance = this;
+        Pax.instance.setConfig(config);
     }
 
-    setConfig({ip, port, miniApp, timeout}: PaxRequest) {
+    setConfig({ip, port = 10009, miniApp, timeout = 120}: PaxRequestParams) {
         this.ip = ip;
         this.port = port;
         this.miniApp = miniApp;
@@ -147,12 +55,15 @@ export default class Pax {
     buildRequest({
                      command,
                      args,
-                     encode = true
-                 }: BuildRequestRequest) {
+                     debug = false,
+                     encode = true,
+                 }: BuildRequestRequestParams) {
         const argsStr = args.map((arg: any) => {
             return Array.isArray(arg) ? arg.join(String.fromCharCode(31)) : arg
         }).join(String.fromCharCode(28));
-
+        if(debug) {
+            console.log(debug)
+        }
         let cmd: string =
             String.fromCharCode(2) +
             command +
@@ -167,117 +78,80 @@ export default class Pax {
         return btoa(cmd);
     }
 
-    parseResponse(response: string) {
-        const checkParams = stringToHex(response).split(" ").pop();
-        const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
-        const lrcFromResponse = getLRC(checkParams!);
-        if (lrcFromResponse !== redundancyCheck) {
-            throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
-        }
-        return PaxResponse.fromString(response);
-    }
+    async httpRequest(query: string): Promise<HTTPRequestResponse> {
+        const url = new URL(`http://${this.ip}`);
+        url.port = '' + this.port;
+        url.search = query;
 
-    parseReportResponse(response: string) {
-        const checkParams = stringToHex(response).split(" ").pop();
-        const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
-        const lrcFromResponse = getLRC(checkParams!);
-        if (lrcFromResponse !== redundancyCheck) {
-            throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
+        if (!this.miniApp) {
+            const res = await fetch(url, {
+                signal: AbortSignal.timeout(this.timeout!),
+            });
+            return res.json();
         }
-        return PaxReportResponse.fromString(response);
-    }
-
-    async httpRequest(query: string) {
-        const baseUrl = "http://" + this.ip + ":" + this.port?.toString();
-        const processUrl = "/?" + query;
-        const url = baseUrl + processUrl;
-        return await this.miniApp!.gapHttpRequest({
+        return this.miniApp.gapHttpRequest({
             method: "GET",
-            url: url,
+            url: url.toString(),
             data: null,
             timeout: this.timeout
-        }) as string;
+        });
     }
 
-    makeCall({command, args, debug = false}: MakeCallRequest): Promise<PaxResponse | null> {
-        return new Promise(async resolve => {
-            try {
-                const query = this.buildRequest({
-                    command: command,
-                    args: args,
-                    debug: debug
-                });
-                logger.info(`PAX REQUEST Query: [${this.ip}:${this.port}?${query}] - Command: [${command}] - DATA: [${args}]`);
+    checkResponse(response: HTTPRequestResponse) {
+        if (!response) throw new Error(`Response null!`);
+        response = parseJSON(response);
+        const checkParams = stringToHex(response).split(" ").pop();
+        const redundancyCheck = stringToHex(response).split(" ").pop()?.substring(1);
+        const lrcFromResponse = getLRC(checkParams!);
+        if (lrcFromResponse !== redundancyCheck) throw new Error(`LRC Mismatch! Got ${lrcFromResponse} but expected ${redundancyCheck}`);
+    }
 
-                const result = await this.httpRequest(query).catch((error: any) => {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}:${this.port}?${query}] Error: ${error.message}`);
-                });
-                if (!result) {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}:${this.port}?${query}] Error: 'Result null!'`);
-                }
-                logger.success(`PAX REQUEST Query: [${this.ip}:${this.port}?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
-                const paxResponse = this.parseResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.ip}:${this.port}?${query}] - RESPONSE: [${JSON.stringify(paxResponse)}]`);
-                return resolve(paxResponse);
+    makeCall(request: MakeCallRequestParams) {
+        return new Promise<PaxResponse | null>(async resolve => {
+            try {
+                const query = this.buildRequest(request);
+                const response = await this.httpRequest(query);
+                this.checkResponse(response);
+                const paxResponse = PaxResponse.fromString(response as string);
+                resolve(paxResponse);
             } catch (error: any) {
-                logger.error(error.message);
                 console.error(error)
-                return resolve(null);
+                resolve(null);
             }
         })
     }
 
-    makeCallReport({command, args, debug}: MakeCallReportRequest): Promise<PaxReportResponse | null> {
-        return new Promise(async resolve => {
+    makeCallReport(request: MakeCallReportRequestParams) {
+        return new Promise<PaxReportResponse | null>(async resolve => {
             try {
-                const query = this.buildRequest({command: command, args: args, debug: debug});
-                logger.info(`PAX REQUEST Query: [${this.ip}:${this.port}?${query}] - Command: [${command}] - DATA: [${args}]`);
-                const result = await this.httpRequest(query).catch((error: any) => {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}:${this.port}?${query}] Error: ${error.message}`);
-                });
-                if (!result) {
-                    throw new Error(`PAX REQUEST fail Query: [${this.ip}:${this.port}?${query}] Error: 'Result null!'`);
-                }
-                logger.success(`PAX REQUEST Query: [${this.ip}:${this.port}?${query}] - RESPONSE: [${JSON.stringify(result)}]`);
-                const paxReportResponse = this.parseReportResponse(result);
-                logger.success(`PAX REQUEST Query: [${this.ip}:${this.port}?${query}] - RESPONSE: [${JSON.stringify(paxReportResponse)}]`);
-                return resolve(paxReportResponse);
+                const query = this.buildRequest(request);
+                const response = await this.httpRequest(query);
+                this.checkResponse(response);
+                const paxReportResponse = PaxReportResponse.fromString(response as string);
+                resolve(paxReportResponse);
             } catch (error: any) {
-                logger.error(error.message);
                 console.error(error);
-                return resolve(null);
+                resolve(null);
             }
         })
     }
 
-    async doInitialize() {
+    doInitialize() {
         return this.makeCall({
             command: "A00",
             args: []
         });
     }
 
-    async doMenu(): Promise<boolean> {
-        return new Promise(async resolve => {
-            const args = [TRANS_TYPE.MENU, '', '', '1', '', '', '', '', ''];
-            const response = await this.makeCall({
-                command: "T00",
-                args: args
-            });
-            if (response !== null) {
-                if (
-                    response.responseCode === "000000" &&
-                    response.responseMessage === "OK"
-                ) {
-                    return resolve(true);
-                }
-            }
-            return resolve(false);
-        })
+    doMenu() {
+        const args = [TRANS_TYPE.MENU, '', '', '1', '', '', '', '', ''];
+        return this.makeCall({
+            command: "T00",
+            args: args
+        });
     }
 
-    async doSales({orderID, amount, tips}: DoSalesRequest) {
-        logger.info(`PAX REQUEST : [do_sales] - Order_ID: [${orderID}] - DATA: [Amount: ${amount} - tips: ${tips}]`);
+    doSales({orderID, amount, tips}: DoSalesRequestParams) {
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
             tipAmount: (tips === 0 || tips === null || isNaN(tips)) ? '0' : tips.toString(),
@@ -303,8 +177,7 @@ export default class Pax {
         });
     }
 
-    async doAdjust({reference, transaction, amount}: DoAdjustRequest) {
-        logger.info(`PAX REQUEST : [do_adjust] - Order_ID: [${reference}] - DATA: [tran_id: ${transaction} - tips: ${amount}]`);
+    doAdjust({reference, transaction, amount}: DoAdjustRequestParams) {
         const amountRequest = new AmountInfo({
             transactionAmount: Math.round(amount * 100).toString()
         });
@@ -329,8 +202,7 @@ export default class Pax {
         });
     }
 
-    async doReturn({orderId, amount}: DoReturnRequest) {
-        logger.info(`PAX REQUEST : [do_return] - DATA: [amount: ${amount}]`);
+    doReturn({orderId, amount}: DoReturnRequestParams) {
         const amountRequest = new AmountInfo({
             transactionAmount: amount.toString(),
         });
@@ -354,11 +226,10 @@ export default class Pax {
         });
     }
 
-    async doVoid({reference, transaction}: DoVoidRequest) {
-        logger.info(`PAX REQUEST : [do_void] - Order_id: ${reference} DATA: [Tran_id: ${transaction}]`);
+    doVoid({reference, transaction}: DoVoidRequestParams) {
         const traceRequest = new TraceInfo({
             transactionNumber: transaction,
-            referenceNumber: reference
+            referenceNumber: reference!,
         });
         const args = [
             TRANS_TYPE.VOID,
@@ -378,112 +249,42 @@ export default class Pax {
         });
     }
 
-    async doBatchClose() {
+    doBatchClose() {
         return this.makeCall({
             command: 'B00',
             args: [],
         });
     }
 
-    async localDetailReport({
-                                edcType = EDC_TYPE.ALL,
-                                cardType = CARD_TYPE.ALL,
-                                recordNum = '',
-                                ecrRefNum = '',
-                                refNum = '',
-                            }: LocalDetailReportRequest = {}) {
-        const reportRequest = new ReportRequest({
-            edcType: edcType,
-            cardType: cardType,
-            recordNum: recordNum,
-            ecrRefNum: ecrRefNum,
-            refNum: refNum,
-        });
+    localDetailReport(request: LocalDetailReportRequestParams = {}) {
+        const reportRequest = new ReportRequest(request);
         return this.makeCallReport({
             command: REPORT_TRAN_TYPE.LOCALDETAILREPORT,
             args: reportRequest.toListData()
         });
     }
 
-    async localTotalReport({
-                               edcType = EDC_TYPE.ALL,
-                           }: LocalTotalReportRequest = {}) {
-        const reportRequest = new ReportRequest({
-            edcType: edcType,
-        });
+    localTotalReport(request: LocalTotalReportRequestParams = {}) {
+        const reportRequest = new ReportRequest(request);
         return this.makeCallReport({
             command: REPORT_TRAN_TYPE.LOCALTOTALREPORT,
             args: reportRequest.toListData()
         });
     }
 
-    async showDialog({
-                         title,
-                         button1,
-                         button2,
-                         button3,
-                         button4,
-                         timeout = this.timeout,
-                         continuousScreen = 0
-                     }: ShowDialogRequest) {
-        const args = [
-            title,
-            button1,
-            button2,
-            button3,
-            button4,
-            timeout,
-            continuousScreen,
-        ];
-
+    showDialog(request: ShowDialogRequestParams) {
+        const showDialogRequest = new ShowDialogRequest(request);
         return this.makeCall({
             command: "A06",
-            args: args
+            args: showDialogRequest.toListData()
         });
     }
 
-    async showTextBox({
-                          title,
-                          text,
-                          button1,
-                          buttonColor1,
-                          button2,
-                          buttonColor2,
-                          button3,
-                          buttonColor3,
-                          buttonKey1,
-                          buttonKey2,
-                          buttonKey3,
-                          enableHardKey,
-                          hardKeyList,
-                          signatureBox = 1,
-                          saveSigPath,
-                          timeout = this.timeout,
-                          continuousScreen = 0,
-                      }: ShowTextBoxRequest) {
-        const args = [
-            title,
-            text,
-            button1,
-            buttonColor1,
-            button2,
-            buttonColor2,
-            button3,
-            buttonColor3,
-            timeout,
-            buttonKey1,
-            buttonKey2,
-            buttonKey3,
-            enableHardKey,
-            hardKeyList,
-            signatureBox,
-            continuousScreen,
-            saveSigPath,
-        ];
-
+    showTextBox(request: ShowTextBoxRequestParams) {
+        const showTextBoxRequest = new ShowTextBoxRequest(request);
         return this.makeCall({
             command: "A56",
-            args: args
+            args: showTextBoxRequest.toListData()
         });
     }
 }

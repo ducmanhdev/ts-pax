@@ -5,9 +5,9 @@ type TraceInformationParams = {
 }
 
 export default class TraceInformation {
-    transactionNumber: string;
-    referenceNumber: string;
-    timeStamp: string;
+    transactionNumber;
+    referenceNumber;
+    timeStamp;
 
     constructor({
                     transactionNumber,

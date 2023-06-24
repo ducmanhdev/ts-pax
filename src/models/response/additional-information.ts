@@ -16,20 +16,20 @@ type AdditionalInformationParams = {
 }
 
 export default class AdditionalInformation {
-    edcType: string;
-    cardBin: string;
-    programType: string;
-    sn: string;
-    tc: string;
-    tvr: string;
-    aid: string;
-    tsi: string;
-    atc: string;
-    applab: string;
-    iad: string;
-    arc: string;
-    cid: string;
-    cvm: string;
+    edcType;
+    cardBin;
+    programType;
+    sn;
+    tc;
+    tvr;
+    aid;
+    tsi;
+    atc;
+    applab;
+    iad;
+    arc;
+    cid;
+    cvm;
 
     constructor({
                     edcType,

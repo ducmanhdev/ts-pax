@@ -1,19 +1,19 @@
-type AmountInfoParams = {
-    transactionAmount?: string;
-    tipAmount?: string;
-    cashBackAmount?: string;
-    merchantFee?: string;
-    taxAmount?: string;
-    fuelAmount?: string;
-}
-
-export default class AmountInfo {
+type AmountInfoParams = Partial<{
     transactionAmount: string;
     tipAmount: string;
     cashBackAmount: string;
     merchantFee: string;
     taxAmount: string;
     fuelAmount: string;
+}>
+
+export default class AmountInfo {
+    transactionAmount;
+    tipAmount;
+    cashBackAmount;
+    merchantFee;
+    taxAmount;
+    fuelAmount;
 
     constructor({
                     transactionAmount = '',

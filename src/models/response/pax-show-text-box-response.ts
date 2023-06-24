@@ -6,8 +6,8 @@ type PaxShowTextBoxResponseParams = {
 }
 
 export default class PaxShowTextBoxResponse {
-    signStatus: string;
-    signImage: string;
+    signStatus;
+    signImage;
     constructor({signStatus, signImage}: PaxShowTextBoxResponseParams) {
         this.signStatus = signStatus;
         this.signImage = signImage;

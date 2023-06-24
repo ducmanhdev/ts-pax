@@ -9,13 +9,13 @@ type PaxInfoResponseParams = {
 }
 
 export default class PaxInfoResponse {
-    SN: string;
-    ModelName: string;
-    OSVersion: string;
-    MacAddress: string;
-    NumberOfLinesPerScreen: string;
-    NumberOfCharsPerline: string;
-    AdditionalInformation: string;
+    SN;
+    ModelName;
+    OSVersion;
+    MacAddress;
+    NumberOfLinesPerScreen;
+    NumberOfCharsPerline;
+    AdditionalInformation;
     constructor({
                     SN,
                     ModelName,

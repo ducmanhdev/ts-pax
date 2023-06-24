@@ -13,17 +13,17 @@ type AccountInformationParams = {
 }
 
 export default class AccountInformation {
-    account: string;
-    entryMode: string;
-    expiryDate: string;
-    ebtType: string;
-    voucherNumber: string;
-    newAccountNo: string;
-    cardType: string;
-    cardHolder: string;
-    cvdApprovalCode: string;
-    cvdMessage: string;
-    cardPresentIndicator: string;
+    account;
+    entryMode;
+    expiryDate;
+    ebtType;
+    voucherNumber;
+    newAccountNo;
+    cardType;
+    cardHolder;
+    cvdApprovalCode;
+    cvdMessage;
+    cardPresentIndicator;
 
     constructor({
                     account,

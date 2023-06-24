@@ -8,12 +8,12 @@ type HostInformationParams = {
 }
 
 export default class HostInformation {
-    hostResponseCode: string;
-    hostResponseMessage: string;
-    authCode: string;
-    hostReferenceNumber: string;
-    traceNumber: string;
-    batchNumber: string;
+    hostResponseCode;
+    hostResponseMessage;
+    authCode;
+    hostReferenceNumber;
+    traceNumber;
+    batchNumber;
 
     constructor({
                     hostResponseCode,

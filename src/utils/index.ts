@@ -60,7 +60,7 @@ export const trim = (str: string = '', chars: any) => {
 }
 
 export const convertSigToPic = (text: string) => {
-    if(!text) return '';
+    if (!text) return '';
 
     const array = text.split('^');
     const num = 10;
@@ -173,4 +173,12 @@ export const convertSigToPic = (text: string) => {
     const image = new Image();
     image.src = canvas.toDataURL();
     return image.src.replace(/^data:image\/bmp;base64,/, '');
+}
+
+export const parseJSON = (data: any) => {
+    try {
+        return JSON.parse(data)
+    } catch (error) {
+        return data
+    }
 }

@@ -1,19 +1,19 @@
-type TrackInfoParams = {
-    referenceNumber?: string;
-    invoiceNumber?: string;
-    authCode?: string;
-    transactionNumber?: string;
-    timeStamp?: string;
-    ecrTransId?: string;
-}
-
-export default class TrackInfo {
+type TrackInfoParams = Partial<{
     referenceNumber: string;
     invoiceNumber: string;
     authCode: string;
     transactionNumber: string;
     timeStamp: string;
     ecrTransId: string;
+}>
+
+export default class TrackInfo {
+    referenceNumber;
+    invoiceNumber;
+    authCode;
+    transactionNumber;
+    timeStamp;
+    ecrTransId;
 
     constructor({
                     referenceNumber = '1',
@@ -23,6 +23,7 @@ export default class TrackInfo {
                     timeStamp = '',
                     ecrTransId = ''
                 }: TrackInfoParams) {
+
         this.referenceNumber = referenceNumber;
         this.invoiceNumber = invoiceNumber;
         this.authCode = authCode;
