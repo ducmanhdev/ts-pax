@@ -41,7 +41,7 @@
     const pax = new Pax({
         ip: '192.168.1.100',
         port: '10009',
-        // miniApp: gapMiniAppSdk,
+        miniApp: 'fetch',
     });
     const doInitialize = async () => {
         await pax.doInitialize();
@@ -99,6 +99,7 @@
         });
         alert(JSON.stringify(res, null, 2))
     }
+
     const showTextBox = async () => {
         const res = await pax.showTextBox({
             title: 'test show dialog',

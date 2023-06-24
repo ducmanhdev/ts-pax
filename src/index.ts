@@ -37,6 +37,8 @@ export default class Pax {
     constructor(config: PaxRequestParams) {
         if (!isIP(config.ip)) throw new Error('Missing ip or ip is invalid!');
         if (!config.miniApp) throw new Error('Missing miniApp!');
+        if (!config.port) config.port = 10009;
+        if (!config.timeout) config.timeout = 1000;
         if (Pax.instance) {
             Pax.instance.setConfig(config);
             return Pax.instance;
@@ -45,7 +47,7 @@ export default class Pax {
         Pax.instance.setConfig(config);
     }
 
-    setConfig({ip, port = 10009, miniApp, timeout = 120}: PaxRequestParams) {
+    setConfig({ip, port, miniApp, timeout}: PaxRequestParams) {
         this.ip = ip;
         this.port = port;
         this.miniApp = miniApp;
@@ -61,7 +63,7 @@ export default class Pax {
         const argsStr = args.map((arg: any) => {
             return Array.isArray(arg) ? arg.join(String.fromCharCode(31)) : arg
         }).join(String.fromCharCode(28));
-        if(debug) {
+        if (debug) {
             console.log(debug)
         }
         let cmd: string =
@@ -83,7 +85,7 @@ export default class Pax {
         url.port = '' + this.port;
         url.search = query;
 
-        if (!this.miniApp) {
+        if ((this.miniApp as any) === 'fetch') {
             const res = await fetch(url, {
                 signal: AbortSignal.timeout(this.timeout!),
             });
@@ -107,7 +109,7 @@ export default class Pax {
     }
 
     makeCall(request: MakeCallRequestParams) {
-        return new Promise<PaxResponse | null>(async resolve => {
+        return new Promise<PaxResponse | null>(async (resolve, reject) => {
             try {
                 const query = this.buildRequest(request);
                 const response = await this.httpRequest(query);
@@ -116,13 +118,13 @@ export default class Pax {
                 resolve(paxResponse);
             } catch (error: any) {
                 console.error(error)
-                resolve(null);
+                reject(error);
             }
         })
     }
 
     makeCallReport(request: MakeCallReportRequestParams) {
-        return new Promise<PaxReportResponse | null>(async resolve => {
+        return new Promise<PaxReportResponse | null>(async (resolve, reject) => {
             try {
                 const query = this.buildRequest(request);
                 const response = await this.httpRequest(query);
@@ -131,7 +133,7 @@ export default class Pax {
                 resolve(paxReportResponse);
             } catch (error: any) {
                 console.error(error);
-                resolve(null);
+                reject(error);
             }
         })
     }
