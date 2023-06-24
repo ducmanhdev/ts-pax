@@ -1,31 +1,21 @@
-const logger = {
-    info(message: string) {
-        console.log(
-            '%cInfo',
-            'background: #3498db; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
-            message
-        );
-    },
-    warning(message: string) {
-        console.log(
-            '%cWarning',
-            'background: #f1c40f; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
-            message
-        );
-    },
-    error(message: string) {
-        console.log(
-            '%cError',
-            'background: red; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
-            message
-        );
-    },
-    success(message: string) {
-        console.log(
-            '%cSuccess',
-            'background: #2ecc71; color: white; padding: 4px 8px; text-transform: uppercase; font-weight: bold',
-            message
-        );
-    }
+const COLORS = {
+    INFO: '#17a2b8',
+    WARNING: '#ffc107',
+    SUCCESS: '#28a745',
+    ERROR: '#dc3545',
 }
+
+type Logger = Record<string, (message: string) => void>;
+
+const logger = Object.entries(COLORS).reduce<Logger>((result, [name, color]) => {
+    const functionName = name.toLowerCase();
+    result[functionName] = (message: string) => {
+        console.log(
+            `%c${name}`,
+            `color: ${color}`,
+            message
+        )
+    };
+    return result;
+}, {})
 export default logger;
