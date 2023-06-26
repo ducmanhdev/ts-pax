@@ -75,7 +75,7 @@ export default class PaxResponse {
 
             // Delete undefined properties
             result = Object.fromEntries(
-                Object.entries(result).filter(([key, value]) => value)
+                Object.entries(result).filter((item: [any, any]) => item[1])
             ) as PaxResponse;
 
             const isError = responseCode === '100003';
