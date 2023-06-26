@@ -97,16 +97,23 @@
             button2: '20',
             button3: '30',
         });
-        alert(JSON.stringify(res, null, 2))
+        console.log(res);
     }
 
     const showTextBox = async () => {
         const res = await pax.showTextBox({
-            title: 'test show dialog',
+            title: 'test show text box',
             text: 'test ne',
-            signatureBox: 1,
+            timeout: 100,
+            button1: 'addasdasdas',
+            buttonColor1: 'ff0000',
+            button2: 'dsadsadasd',
+            buttonColor2: '2d93ab',
+            button3: 'ddsadadas',
+            buttonColor3: '478d0a',
+            signatureBox: 0
         });
-        alert(JSON.stringify(res, null, 2))
+        console.log(res);
     }
 </script>
 </body>

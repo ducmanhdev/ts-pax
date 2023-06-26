@@ -527,8 +527,8 @@ export default class PaxReportResponse {
     version;
     responseCode;
     responseMessage;
-    paxLocalTotalReport: PaxLocalTotalReport | undefined;
-    paxLocalDetailReport: PaxLocalDetailReport | undefined;
+    paxLocalTotalReport?: PaxLocalTotalReport;
+    paxLocalDetailReport?: PaxLocalDetailReport;
 
     constructor({
                     status,

@@ -26,12 +26,12 @@ export default class PaxResponse {
     responseCode;
     responseMessage;
 
-    amount: number | undefined;
-    paxPaymentResponse: PaxPaymentResponse | undefined;
-    paxBatchResponse: PaxBatchResponse | undefined;
-    paxInfoResponse: PaxInfoResponse | undefined;
-    paxShowDialogResponse: PaxShowDialogResponse | undefined;
-    paxShowTextBoxResponse: PaxShowTextBoxResponse | undefined;
+    amount?: number;
+    paxPaymentResponse?: PaxPaymentResponse;
+    paxBatchResponse?: PaxBatchResponse;
+    paxInfoResponse?: PaxInfoResponse;
+    paxShowDialogResponse?: PaxShowDialogResponse;
+    paxShowTextBoxResponse?: PaxShowTextBoxResponse;
 
     constructor({
                     status,
@@ -58,20 +58,14 @@ export default class PaxResponse {
             return hexToString(item);
         });
 
-        // console.log('=========================');
-        // console.log(JSON.stringify({res}, null, 2));
-        // console.log(JSON.stringify({len}, null, 2));
-        // console.log(JSON.stringify({hex}, null, 2));
-        // console.log(JSON.stringify({fields}, null, 2));
-        // console.log('=========================');
-
+        console.log(fields);
         if (fields.length >= 5) {
-            const status = fields[1]!;
-            const command = fields[2]!;
-            const version = fields[3]!;
-            const responseCode = fields[4]!;
-            const responseMessage = fields[5]!;
-            const result = new PaxResponse({
+            const status = fields[1];
+            const command = fields[2];
+            const version = fields[3];
+            const responseCode = fields[4];
+            const responseMessage = fields[5];
+            let result = new PaxResponse({
                 status: status,
                 command: command,
                 version: version,
@@ -79,19 +73,24 @@ export default class PaxResponse {
                 responseMessage: responseMessage,
             });
 
+            // Delete undefined properties
+            result = Object.fromEntries(
+                Object.entries(result).filter(([key, value]) => value)
+            ) as PaxResponse;
+
             const isError = responseCode === '100003';
+            if (isError) return result;
             if (command === PaxResponse.COMMAND_TYPE_INIT && fields.length >= 7) {
                 result.paxInfoResponse = PaxInfoResponse.fromList(fields);
             } else if (command === PaxResponse.COMMAND_TYPE_PAYMENT && fields.length >= 14) {
                 result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
             } else if (command === PaxResponse.COMMAND_TYPE_BATCH && fields.length >= 12) {
                 result.paxBatchResponse = PaxBatchResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_SHOW_DIALOG && !isError) {
+            } else if (command === PaxResponse.COMMAND_TYPE_SHOW_DIALOG) {
                 result.paxShowDialogResponse = PaxShowDialogResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_SHOW_TEXT_BOX && !isError) {
+            } else if (command === PaxResponse.COMMAND_TYPE_SHOW_TEXT_BOX) {
                 result.paxShowTextBoxResponse = PaxShowTextBoxResponse.fromList(fields);
             }
-            // console.log({parseResponse: result});
             return result;
         }
         return null;

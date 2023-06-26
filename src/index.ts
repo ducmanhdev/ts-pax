@@ -38,7 +38,7 @@ export default class Pax {
         if (!isIP(config.ip)) throw new Error('Missing ip or ip is invalid!');
         if (!config.miniApp) throw new Error('Missing miniApp!');
         if (!config.port) config.port = 10009;
-        if (!config.timeout) config.timeout = 1000;
+        if (!config.timeout) config.timeout = 10000;
         if (Pax.instance) {
             Pax.instance.setConfig(config);
             return Pax.instance;
@@ -89,7 +89,7 @@ export default class Pax {
             const res = await fetch(url, {
                 signal: AbortSignal.timeout(this.timeout!),
             });
-            return res.json();
+            return res.text();
         }
         return this.miniApp.gapHttpRequest({
             method: "GET",

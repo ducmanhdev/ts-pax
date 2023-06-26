@@ -48,14 +48,14 @@ export default class ShowTextBoxRequest {
                     buttonColor2,
                     button3,
                     buttonColor3,
+                    timeout = '',
                     buttonKey1,
                     buttonKey2,
                     buttonKey3,
                     enableHardKey,
                     hardKeyList,
-                    signatureBox = 1,
+                    signatureBox = 0,
                     saveSigPath,
-                    timeout = 100,
                     continuousScreen = 0,
                 }: ShowTextBoxRequestParams) {
         this.title = title;
@@ -66,6 +66,7 @@ export default class ShowTextBoxRequest {
         this.buttonColor2 = buttonColor2;
         this.button3 = button3;
         this.buttonColor3 = buttonColor3;
+        this.timeout = timeout;
         this.buttonKey1 = buttonKey1;
         this.buttonKey2 = buttonKey2;
         this.buttonKey3 = buttonKey3;
@@ -73,7 +74,6 @@ export default class ShowTextBoxRequest {
         this.hardKeyList = hardKeyList;
         this.signatureBox = signatureBox;
         this.saveSigPath = saveSigPath;
-        this.timeout = timeout;
         this.continuousScreen = continuousScreen;
     }
 
@@ -87,6 +87,7 @@ export default class ShowTextBoxRequest {
             this.buttonColor2,
             this.button3,
             this.buttonColor3,
+            this.timeout,
             this.buttonKey1,
             this.buttonKey2,
             this.buttonKey3,
@@ -94,7 +95,6 @@ export default class ShowTextBoxRequest {
             this.hardKeyList,
             this.signatureBox,
             this.saveSigPath,
-            this.timeout,
             this.continuousScreen,
         ];
     }

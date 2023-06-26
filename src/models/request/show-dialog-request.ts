@@ -20,12 +20,12 @@ export default class ShowDialogRequest {
     continuousScreen;
 
     constructor({
-                    title = '',
-                    button1 = '',
-                    button2 = '',
-                    button3 = '',
-                    button4 = '',
-                    timeout = 100,
+                    title,
+                    button1,
+                    button2,
+                    button3,
+                    button4,
+                    timeout = '',
                     continuousScreen = 0
                 }: ShowDialogRequestParams) {
         this.title = title;
