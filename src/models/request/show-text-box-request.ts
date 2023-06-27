@@ -94,7 +94,7 @@ export default class ShowTextBoxRequest {
             this.enableHardKey,
             this.hardKeyList,
             this.signatureBox,
-            this.saveSigPath,
+            // this.saveSigPath,
             this.continuousScreen,
         ];
     }
