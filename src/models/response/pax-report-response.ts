@@ -2,13 +2,7 @@ import AccountInformation from "./account-information";
 import AmountInformation from "./amount-information";
 import HostInformation from "./host-information";
 import TraceInformation from "./trace-information";
-import {hexToString, removeUndefinedInObj, stringToHex} from "../../utils";
-import PaxInfoResponse from "./pax-info-response";
-import PaxPaymentResponse from "./pax-payment-response";
-import PaxBatchResponse from "./pax-batch-response";
-import PaxShowDialogResponse from "./pax-show-dialog-response";
-import PaxShowTextBoxResponse from "./pax-show-text-box-response";
-import PaxScanResponse from "./pax-scan-response";
+import {hexToString, stringToHex} from "../../utils";
 
 type PaxLocalDetailReportParams = {
     totalRecord: string;
