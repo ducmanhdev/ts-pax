@@ -61,7 +61,7 @@ export default class PaxResponse {
             return hexToString(item);
         });
 
-        let result = new PaxResponse({
+        const result = new PaxResponse({
             status: fields[1],
             command: fields[2],
             version: fields[3],
