@@ -182,3 +182,11 @@ export const parseJSON = (data: any) => {
         return data
     }
 }
+
+export const removeUndefinedInObj = (obj: Record<any, any>): void => {
+    Object.keys(obj).forEach(key => {
+        if (obj[key] === undefined) {
+            delete obj[key];
+        }
+    });
+}

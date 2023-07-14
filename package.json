@@ -1,6 +1,6 @@
 {
   "name": "pax-ts",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -13,7 +13,7 @@
     "build": "pnpm run lint && tsup",
     "lint": "eslint --ignore-path .eslintignore --ext .js,.ts .",
     "lint-fix": "eslint --fix",
-    "server": "http-server -c-1 -p 8082 -o index.html",
+    "server": "http-server -c-1 -p 8081 -o index.html",
     "dev": "concurrently \"tsup --watch\" \"pnpm run server\""
   },
   "keywords": [],

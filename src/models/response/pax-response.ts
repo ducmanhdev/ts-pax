@@ -1,9 +1,10 @@
 import PaxBatchResponse from "./pax-batch-response";
 import PaxPaymentResponse from "./pax-payment-response";
 import PaxInfoResponse from "./pax-info-response";
-import {hexToString, stringToHex} from "../../utils";
+import {hexToString, removeUndefinedInObj, stringToHex} from "../../utils";
 import PaxShowDialogResponse from "./pax-show-dialog-response";
 import PaxShowTextBoxResponse from "./pax-show-text-box-response";
+import PaxScanResponse from "./pax-scan-response";
 
 type PaxResponseParams = {
     status: string;
@@ -19,6 +20,7 @@ export default class PaxResponse {
     static COMMAND_TYPE_INIT = "A01";
     static COMMAND_TYPE_SHOW_DIALOG = "A07";
     static COMMAND_TYPE_SHOW_TEXT_BOX = "A57";
+    static COMMAND_TYPE_SCAN = "A71";
 
     status;
     command;
@@ -32,6 +34,7 @@ export default class PaxResponse {
     paxInfoResponse?: PaxInfoResponse;
     paxShowDialogResponse?: PaxShowDialogResponse;
     paxShowTextBoxResponse?: PaxShowTextBoxResponse;
+    paxScanResponse?: PaxScanResponse;
 
     constructor({
                     status,
@@ -58,58 +61,68 @@ export default class PaxResponse {
             return hexToString(item);
         });
 
-        console.log(fields);
-        if (fields.length >= 5) {
-            const status = fields[1];
-            const command = fields[2];
-            const version = fields[3];
-            const responseCode = fields[4];
-            const responseMessage = fields[5];
-            let result = new PaxResponse({
-                status: status,
-                command: command,
-                version: version,
-                responseCode: responseCode,
-                responseMessage: responseMessage,
-            });
+        let result = new PaxResponse({
+            status: fields[1],
+            command: fields[2],
+            version: fields[3],
+            responseCode: fields[4],
+            responseMessage: fields[5],
+        });
 
-            // Delete undefined properties
-            result = Object.fromEntries(
-                Object.entries(result).filter((item: [any, any]) => item[1])
-            ) as PaxResponse;
+        removeUndefinedInObj(result);
 
-            const isError = responseCode === '100003';
-            if (isError) return result;
-            if (command === PaxResponse.COMMAND_TYPE_INIT && fields.length >= 7) {
+        if (result.responseCode !== '000000') return result;
+
+        switch (result.command) {
+            case PaxResponse.COMMAND_TYPE_INIT: {
                 result.paxInfoResponse = PaxInfoResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_PAYMENT && fields.length >= 14) {
-                result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_BATCH && fields.length >= 12) {
-                result.paxBatchResponse = PaxBatchResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_SHOW_DIALOG) {
-                result.paxShowDialogResponse = PaxShowDialogResponse.fromList(fields);
-            } else if (command === PaxResponse.COMMAND_TYPE_SHOW_TEXT_BOX) {
-                result.paxShowTextBoxResponse = PaxShowTextBoxResponse.fromList(fields);
+                break;
             }
-            return result;
+            case PaxResponse.COMMAND_TYPE_PAYMENT: {
+                result.paxPaymentResponse = PaxPaymentResponse.fromList(fields);
+                break;
+            }
+            case PaxResponse.COMMAND_TYPE_BATCH: {
+                result.paxBatchResponse = PaxBatchResponse.fromList(fields);
+                break;
+            }
+            case PaxResponse.COMMAND_TYPE_SHOW_DIALOG: {
+                result.paxShowDialogResponse = PaxShowDialogResponse.fromList(fields);
+                break;
+            }
+            case PaxResponse.COMMAND_TYPE_SHOW_TEXT_BOX: {
+                result.paxShowTextBoxResponse = PaxShowTextBoxResponse.fromList(fields);
+                break;
+            }
+            case PaxResponse.COMMAND_TYPE_SCAN: {
+                result.paxScanResponse = PaxScanResponse.fromList(fields);
+                break;
+            }
         }
-        return null;
+        return result;
     }
 
     extraData() {
-        if (this.command === PaxResponse.COMMAND_TYPE_PAYMENT && this.paxPaymentResponse != null) {
-            return this.paxPaymentResponse.toJson();
+        switch (this.command) {
+            case PaxResponse.COMMAND_TYPE_PAYMENT: {
+                return this.paxPaymentResponse?.toJson();
+            }
+            case PaxResponse.COMMAND_TYPE_BATCH: {
+                return this.paxBatchResponse?.toJson();
+            }
+            case PaxResponse.COMMAND_TYPE_SHOW_DIALOG: {
+                return this.paxShowDialogResponse?.toJson();
+            }
+            case PaxResponse.COMMAND_TYPE_SHOW_TEXT_BOX: {
+                return this.paxShowTextBoxResponse?.toJson();
+            }
+            case PaxResponse.COMMAND_TYPE_SCAN: {
+                return this.paxScanResponse?.toJson();
+            }
+            default: {
+                return null;
+            }
         }
-        if (this.command === PaxResponse.COMMAND_TYPE_BATCH && this.paxBatchResponse != null) {
-            return this.paxBatchResponse.toJson();
-        }
-        if (this.command === PaxResponse.COMMAND_TYPE_SHOW_DIALOG && this.paxShowDialogResponse != null) {
-            return this.paxShowDialogResponse.toJson();
-        }
-        if (this.command === PaxResponse.COMMAND_TYPE_SHOW_TEXT_BOX && this.paxShowTextBoxResponse != null) {
-            return this.paxShowTextBoxResponse.toJson();
-        }
-        return null;
     }
 
     toJson() {

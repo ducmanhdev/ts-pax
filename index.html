@@ -32,6 +32,7 @@
     <button onclick="doReturn()">RETURN</button>
     <button onclick="showDialog()">SHOW DIALOG</button>
     <button onclick="showTextBox()">SHOW TEXT BOX</button>
+    <button onclick="scan()">SCAN</button>
 </div>
 <script src="./dist/index.global.js"></script>
 <script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
@@ -39,55 +40,64 @@
     const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
     gapMiniAppSdk.setPlatformExecutor("Android");
     const pax = new Pax({
-        ip: '192.168.1.100',
+        ip: '192.168.1.114',
         port: '10009',
         miniApp: 'fetch',
     });
     const doInitialize = async () => {
-        await pax.doInitialize();
+        const res = await pax.doInitialize();
+        console.log(res);
     }
     const doLocalTotalReport = async () => {
-        await pax.localTotalReport();
+        const res = await pax.localTotalReport();
+        console.log(res);
     }
 
     const doLocalDetailReport = async () => {
-        await pax.localDetailReport();
+        const res = await pax.localDetailReport();
+        console.log(res);
     };
 
     const doMenu = async () => {
-        await pax.doMenu();
+        const res = await pax.doMenu();
+        console.log(res);
     };
 
     const doSale = async () => {
-        await pax.doSales({
+        const res = await pax.doSales({
             amount: 500,
             tips: 0,
         });
+        console.log(res);
     };
 
     const doAdjust = async () => {
-        await pax.doAdjust({
+        const res = await pax.doAdjust({
             reference: "95518",
             transaction: "1",
             amount: Math.floor(Math.random() * 5000)
-        })
+        });
+        console.log(res)
     };
 
     const doVoid = async () => {
-        await pax.doVoid({
+        const res = await pax.doVoid({
             transaction: "3",
-        })
+        });
+        console.log(res)
     };
 
     const doBatch = async () => {
-        await pax.doBatchClose()
+        const res = await pax.doBatchClose();
+        console.log(res)
     };
 
     const doReturn = async () => {
-        await pax.doReturn({
+        const res = await pax.doReturn({
             amount: 10,
             orderId: 85518,
         });
+        console.log(res)
     };
 
     const showDialog = async () => {
@@ -113,6 +123,11 @@
             buttonColor3: '478d0a',
             signatureBox: 0
         });
+        console.log(res);
+    }
+
+    const scan = async () => {
+        const res = await pax.scan();
         console.log(res);
     }
 </script>

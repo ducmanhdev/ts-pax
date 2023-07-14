@@ -2,7 +2,13 @@ import AccountInformation from "./account-information";
 import AmountInformation from "./amount-information";
 import HostInformation from "./host-information";
 import TraceInformation from "./trace-information";
-import {hexToString, stringToHex} from "../../utils";
+import {hexToString, removeUndefinedInObj, stringToHex} from "../../utils";
+import PaxInfoResponse from "./pax-info-response";
+import PaxPaymentResponse from "./pax-payment-response";
+import PaxBatchResponse from "./pax-batch-response";
+import PaxShowDialogResponse from "./pax-show-dialog-response";
+import PaxShowTextBoxResponse from "./pax-show-text-box-response";
+import PaxScanResponse from "./pax-scan-response";
 
 type PaxLocalDetailReportParams = {
     totalRecord: string;
@@ -558,43 +564,42 @@ export default class PaxReportResponse {
             }
             return hexToString(item);
         });
-        console.log({rawResponse: res});
-        console.log({len});
-        console.log({hex});
-        console.log({fields});
-        if (fields.length >= 5) {
-            const status = fields[1]!;
-            const command = fields[2]!;
-            const version = fields[3]!;
-            const responseCode = fields[4]!;
-            const responseMessage = fields[5]!;
-            const result = new PaxReportResponse({
-                status: status,
-                command: command,
-                version: version,
-                responseCode: responseCode,
-                responseMessage: responseMessage,
-            })
-            if (fields.length >= 7 && command === PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_TOTAL_RESPONSE) {
-                result.paxLocalTotalReport = PaxLocalTotalReport.fromList(fields[7]);
+
+        const result = new PaxReportResponse({
+            status: fields[1],
+            command: fields[2],
+            version: fields[3],
+            responseCode: fields[4],
+            responseMessage: fields[5],
+        });
+
+        if (result.responseCode !== '000000') return result;
+
+        switch (result.command) {
+            case PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_TOTAL_RESPONSE: {
+                result.paxLocalTotalReport = PaxLocalTotalReport.fromList(fields);
+                break;
             }
-            if (fields.length >= 14 && command === PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE) {
+            case PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE: {
                 result.paxLocalDetailReport = PaxLocalDetailReport.fromList(fields);
+                break;
             }
-            console.log({'parseResponse': result})
-            return result;
         }
-        return null;
+        return result;
     }
 
     extraData() {
-        if (
-            this.command === PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE &&
-            this.paxLocalDetailReport != null
-        ) {
-            return this.paxLocalDetailReport.toJson();
+        switch (this.command) {
+            case PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_TOTAL_RESPONSE: {
+                return this.paxLocalTotalReport?.toJson();
+            }
+            case PaxReportResponse.COMMAND_TYPE_REPORT_LOCAL_DETAIL_RESPONSE: {
+                return this.paxLocalDetailReport?.toJson();
+            }
+            default: {
+                return null;
+            }
         }
-        return null;
     }
 
     toJson() {

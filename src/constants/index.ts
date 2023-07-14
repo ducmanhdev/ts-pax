@@ -18,7 +18,7 @@ export const REPORT_TRAN_TYPE = {
     HOSTREPORT: "R04",
     HISTORYREPORT: "R05",
     SAFSUMMARYREPORT: "R06",
-} as const
+} as const;
 
 export const EDC_TYPE = {
     ALL: "00",
@@ -29,7 +29,7 @@ export const EDC_TYPE = {
     GIFT: "05",
     LOYALTY: "06",
     CASH: "07",
-} as const
+} as const;
 
 export const TRANS_TYPE = {
     MENU: '00',
@@ -45,7 +45,7 @@ export const TRANS_TYPE = {
     VOID_AUTH: '19',
     VOID_POST: '20',
     VOID_FRCD: '21',
-} as const
+} as const;
 
 export const ENTRY_MODE = {
     MANUAL: "00",
@@ -54,4 +54,4 @@ export const ENTRY_MODE = {
     SCANNER: "03",
     CHIP: "04",
     CHIP_FALL_BACK_SWIPE: "05",
-} as const
+} as const;

@@ -11,6 +11,8 @@ import PaxResponse from "./models/response/pax-response";
 import AmountInfo from "./models/request/amount-info";
 import ShowDialogRequest, {ShowDialogRequestParams} from "./models/request/show-dialog-request";
 import ShowTextBoxRequest, {ShowTextBoxRequestParams} from "./models/request/show-text-box-request";
+import ScanRequest, {ScanRequestParams} from "./models/request/scan-request";
+
 import {
     BuildRequestRequestParams,
     DoAdjustRequestParams,
@@ -87,7 +89,7 @@ export default class Pax {
 
         if ((this.miniApp as any) === 'fetch') {
             const res = await fetch(url, {
-                signal: AbortSignal.timeout(this.timeout!),
+                signal: AbortSignal.timeout(this.timeout),
             });
             return res.text();
         }
@@ -287,6 +289,14 @@ export default class Pax {
         return this.makeCall({
             command: "A56",
             args: showTextBoxRequest.toListData()
+        });
+    }
+
+    scan(request: ScanRequestParams = {}) {
+        const scanRequest = new ScanRequest(request);
+        return this.makeCall({
+            command: "A70",
+            args: scanRequest.toListData(),
         });
     }
 }
