@@ -1,4 +1,3 @@
-import {GapMiniAppSdk} from "gap-miniapp-sdk";
 import {ReportRequestParams} from "./models/request/report-request";
 
 export type ContinuousScreen = 0 | 1;
@@ -14,7 +13,6 @@ export type HTTPRequestResponse = JSON | string | null;
 export type PaxRequestParams = {
     ip: string;
     port: number;
-    miniApp: GapMiniAppSdk,
     timeout: number;
 }
 export type MakeCallRequestParams = {

@@ -35,14 +35,10 @@
     <button onclick="scan()">SCAN</button>
 </div>
 <script src="./dist/index.global.js"></script>
-<script src="https://unpkg.com/gap-miniapp-sdk@1.0.43/dist/gap-mini-app-sdk.js"></script>
 <script>
-    const gapMiniAppSdk = new GapMiniAppModule.GapMiniAppSdk();
-    gapMiniAppSdk.setPlatformExecutor("Android");
     const pax = new Pax({
         ip: '192.168.1.114',
         port: '10009',
-        miniApp: 'fetch',
     });
     const doInitialize = async () => {
         const res = await pax.doInitialize();

@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  gap-miniapp-sdk:
-    specifier: ^1.0.63
-    version: 1.0.63
   is-ip:
     specifier: ^5.0.0
     version: 5.0.0
@@ -1024,12 +1021,6 @@ packages:
     engines: {node: '>=14.16'}
     dev: false
 
-  /gap-miniapp-sdk@1.0.63:
-    resolution: {integrity: sha512-m4quvCtkruzW4Gu3IWUKrJ476zZkD4SmHeFi0ENwRhQGHM8o6wFZWPddIdwck0sdqSaSd/F/m0bq3KQIQof+2A==}
-    dependencies:
-      jsonrepair: 2.2.1
-    dev: false
-
   /get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
     engines: {node: 6.* || 8.* || >= 10.*}
@@ -1301,11 +1292,6 @@ packages:
   /json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
     dev: true
-
-  /jsonrepair@2.2.1:
-    resolution: {integrity: sha512-o9Je8TceILo872uQC9fIBJm957j1Io7z8Ca1iWIqY6S5S65HGE9XN7XEEw7+tUviB9Vq4sygV89MVTxl+rhZyg==}
-    hasBin: true
-    dev: false
 
   /levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}

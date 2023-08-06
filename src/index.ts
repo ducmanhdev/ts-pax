@@ -2,7 +2,6 @@ import {isIP} from 'is-ip';
 
 import ReportRequest from "./models/request/report-request";
 import PaxReportResponse from "./models/response/pax-report-response";
-import {GapMiniAppSdk} from "gap-miniapp-sdk";
 import {getLRC, parseJSON, stringToHex} from "./utils";
 import {REPORT_TRAN_TYPE, TRANS_TYPE} from "./constants";
 
@@ -34,11 +33,9 @@ export default class Pax {
     ip!: string;
     port!: number;
     timeout!: number;
-    miniApp!: GapMiniAppSdk;
 
     constructor(config: PaxRequestParams) {
         if (!isIP(config.ip)) throw new Error('Missing ip or ip is invalid!');
-        if (!config.miniApp) throw new Error('Missing miniApp!');
         if (!config.port) config.port = 10009;
         if (!config.timeout) config.timeout = 10000;
         if (Pax.instance) {
@@ -49,10 +46,9 @@ export default class Pax {
         Pax.instance.setConfig(config);
     }
 
-    setConfig({ip, port, miniApp, timeout}: PaxRequestParams) {
+    setConfig({ip, port, timeout}: PaxRequestParams) {
         this.ip = ip;
         this.port = port;
-        this.miniApp = miniApp;
         this.timeout = timeout;
     }
 
@@ -87,18 +83,10 @@ export default class Pax {
         url.port = '' + this.port;
         url.search = query;
 
-        if ((this.miniApp as any) === 'fetch') {
-            const res = await fetch(url, {
-                signal: AbortSignal.timeout(this.timeout),
-            });
-            return res.text();
-        }
-        return this.miniApp.gapHttpRequest({
-            method: "GET",
-            url: url.toString(),
-            data: null,
-            timeout: this.timeout
+        const res = await fetch(url, {
+            signal: AbortSignal.timeout(this.timeout),
         });
+        return res.text();
     }
 
     checkResponse(response: HTTPRequestResponse) {

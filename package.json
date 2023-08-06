@@ -20,7 +20,6 @@
   "author": "ManhND",
   "license": "ISC",
   "dependencies": {
-    "gap-miniapp-sdk": "^1.0.63",
     "is-ip": "^5.0.0"
   },
   "devDependencies": {
